@@ -1,0 +1,54 @@
+# Emeritus Prime Bank — Front-End Demo
+
+Hey there! Welcome to the Emeritus Prime Bank demo. I built this project as a self-contained, front-end UI experiment. As a final-year Application Development student, I'm constantly bridging the gap between theory and practical coding. I wanted a sandbox project to really get my hands dirty with React and modern build tools like Vite, and this is the result.
+
+**A quick disclaimer:** This is entirely a front-end "smoke and mirrors" demo. There is no backend, no database, and definitely no real money involved. That "face scan" button? Just a fun animation I managed to figure out! Everything resets the moment you reload the page.
+
+## Why I Built This
+
+Between juggling my final-year modules and figuring out the architectural side of things, I wanted to prove to myself that I could build an interface that actually *looks* and *feels* production-ready. It's been an awesome learning curve—figuring out how to structure components cleanly, manage state without a real backend, and keep the user experience smooth. I'm still growing as a dev, but this project was a huge step in piecing the puzzle together.
+
+## Project Structure
+
+Here is a quick look under the hood at how I've organized things:
+
+\`\`\`text
+emeritus-prime-bank/
+├── index.html              // Entry HTML, loads fonts + main.jsx
+├── package.json
+├── vite.config.js
+├── src/
+│   ├── main.jsx            // Mounts the app
+│   ├── App.jsx             // Root component
+│   ├── index.css           // Global styles and design tokens
+│   ├── components/         // Where the magic happens (UI chunks)
+│   │   ├── Dashboard.jsx
+│   │   ├── LoginScreen.jsx
+│   │   └── ...
+│   ├── context/
+│   │   └── AuthContext.jsx // Faking the login state!
+│   └── data/
+│       └── mockData.js     // Hardcoded fictional transactions
+\`\`\`
+
+## Want to run it locally?
+
+If you want to clone this and play around with the code yourself, here is how I set it up:
+
+1. **Clone or Unzip** the project to your local machine.
+2. Open it up in your favorite IDE (I use IntelliJ IDEA).
+3. Open your terminal in the project root and install the dependencies:
+   \`\`\`bash
+   npm install
+   \`\`\`
+4. Fire up the development server:
+   \`\`\`bash
+   npm run dev
+   \`\`\`
+5. Click the `http://localhost:5173` link in the terminal to see it live in your browser.
+
+## A Note for Other Devs
+
+If you fork this, please keep the demo banner and the "simulated" warnings in place. The goal was to make it look real, which means we have a responsibility to make sure nobody actually mistakes it for a real bank!
+
+Also, the passcode is intentionally just `1234`. Remember, I'm focusing on the UI/UX here—building iron-clad security architecture is a project for another day!

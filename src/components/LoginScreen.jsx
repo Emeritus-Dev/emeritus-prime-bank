@@ -45,7 +45,7 @@ export default function LoginScreen() {
                 <div className="brand-mark">
                     <FoxMark state={markState} />
                     <div className="brand-name">Emeritus Prime Bank</div>
-                    <div className="brand-tag">Demo build</div>
+                    <div className="brand-tag">Proto-Sim</div>
                 </div>
 
                 <form className="login-form" onSubmit={handlePasscodeSubmit}>
@@ -72,7 +72,7 @@ export default function LoginScreen() {
                         onClick={handleSimulatedScan}
                         disabled={markState === "scanning"}
                     >
-                        Use face scan (simulated)
+                        Use face scan
                     </button>
                 </form>
             </div>

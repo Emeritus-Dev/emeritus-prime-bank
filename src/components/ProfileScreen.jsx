@@ -56,9 +56,10 @@ function FlipTile({ tile }) {
     const [isFlipped, setIsFlipped] = useState(false);
 
     return (
-        <div className="tile">
+        // FIX: Moved the dynamic class logic to the outer .tile wrapper so the CSS matches!
+        <div className={`tile${isFlipped ? " is-flipped" : ""}`}>
             <div
-                className={`tile-inner${isFlipped ? " is-flipped" : ""}`}
+                className="tile-inner"
                 onClick={() => setIsFlipped(!isFlipped)}
                 role="button"
                 tabIndex={0}

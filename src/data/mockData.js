@@ -1,13 +1,13 @@
 export const DEMO_CUSTOMER = {
-    firstName: "Jordan",
-    initials: "JM",
+    firstName: "Tshegofatso",
+    initials: "TH",
     passcode: "1234",
 };
 
 export const ACCOUNTS = [
     {
         id: "chk-001",
-        name: "Everyday Checking",
+        name: "Prime Checking",
         number: "**** 4471",
         balance: 4218.62,
         frozen: false,
@@ -17,6 +17,34 @@ export const ACCOUNTS = [
         name: "Vault Savings",
         number: "**** 9903",
         balance: 18230.00,
+        frozen: false,
+    },
+    {
+        id: "inv-001",
+        name: "Global Equity Fund",
+        number: "**** 1124",
+        balance: 145200.50,
+        frozen: false,
+    },
+    {
+        id: "bnd-001",
+        name: "Fixed-Term Bond",
+        number: "**** 2201",
+        balance: 50000.00,
+        frozen: false,
+    },
+    {
+        id: "lon-001",
+        name: "Flexi Personal Loan",
+        number: "**** 8832",
+        balance: -12500.00,
+        frozen: false,
+    },
+    {
+        id: "hom-001",
+        name: "Prime Home Loan",
+        number: "**** 5519",
+        balance: -840500.00,
         frozen: false,
     },
 ];

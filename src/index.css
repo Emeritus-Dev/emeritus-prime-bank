@@ -10,7 +10,7 @@
     --rust: #b5482d;
     --moss: #6f8f5c;
 
-    /* The missing ease variable for the smooth animations! */
+    /* Essential for smooth animations and 3D flips */
     --ease: cubic-bezier(0.4, 0, 0.2, 1);
 
     --display: "Fraunces", "Iowan Old Style", serif;
@@ -414,46 +414,105 @@ button {
     margin: 0.2rem 0 0;
 }
 
-/* ---------- Accounts & Lists ---------- */
+/* ---------- Sliding Account Cards ---------- */
 .accounts-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
 }
 
-.account-card {
-    background: var(--surface);
+.account-slider-container {
+    position: relative;
+    background: var(--surface-raised);
     border: 1px solid var(--hairline);
-    border-radius: 10px;
-    padding: 1.1rem 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    transition: border-color 0.2s var(--ease), opacity 0.2s var(--ease);
+    border-radius: 12px;
+    overflow: hidden;
+    height: 150px;
+    transition: opacity 0.2s var(--ease);
 }
 
-.account-card.is-frozen {
+.account-slider-container.is-frozen {
     opacity: 0.5;
 }
 
-.account-name {
-    font-size: 0.8rem;
-    color: var(--parchment-dim);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
+/* The revealed layer sitting in the back */
+.account-actions-bg {
+    position: absolute;
+    inset: 0;
+    padding: 1.25rem 1.25rem 1.25rem 25%; /* Pushes text to the right half */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    text-align: right;
 }
 
-.account-balance {
-    font-family: var(--mono);
-    font-size: 1.5rem;
-}
-
-.account-number {
-    font-family: var(--mono);
+.revealed-label {
     font-size: 0.72rem;
     color: var(--parchment-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
+.revealed-amount {
+    font-family: var(--mono);
+    font-size: 1.4rem;
+    color: var(--parchment);
+}
+
+.revealed-amount.is-debt { color: var(--rust); }
+
+.quick-actions-row { display: flex; gap: 0.5rem; }
+
+.action-pill {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    color: var(--parchment);
+    border-radius: 20px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+
+.action-pill:hover {
+    background: var(--ink);
+    border-color: var(--gold);
+}
+
+/* The front card that slides away */
+.account-front {
+    position: absolute;
+    inset: 0;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.45s var(--ease), border-color 0.2s var(--ease);
+    z-index: 2;
+    cursor: pointer;
+    border: 1px solid transparent;
+}
+
+.account-front:hover { border-color: var(--hairline); }
+
+.account-front.is-slid {
+    transform: translateX(-75%);
+    border-right: 1px solid var(--hairline);
+    box-shadow: 10px 0 20px rgba(0,0,0,0.4);
+}
+
+.front-header { display: flex; flex-direction: column; gap: 0.3rem; }
+.account-name { font-size: 0.8rem; color: var(--parchment-dim); text-transform: uppercase; letter-spacing: 0.06em; }
+.account-number { font-family: var(--mono); font-size: 0.72rem; color: var(--parchment-dim); }
+
+.front-footer { display: flex; justify-content: space-between; align-items: flex-end; }
+.masked-balance { font-family: var(--mono); font-size: 1.2rem; color: var(--parchment-dim); letter-spacing: 0.1em; }
+.slide-hint { font-size: 0.75rem; color: var(--amber); opacity: 0.8; }
+
+/* ---------- Transactions & Lists ---------- */
 .transactions-list {
     background: var(--surface);
     border: 1px solid var(--hairline);
@@ -770,6 +829,7 @@ button {
 .tile-front-label {
     font-size: 0.78rem;
     line-height: 1.25;
+    text-align: center;
 }
 
 .tile-back {
@@ -778,6 +838,7 @@ button {
     transform: rotateY(180deg);
     font-size: 0.74rem;
     line-height: 1.35;
+    text-align: center;
 }
 
 .tile-back-title {
@@ -835,7 +896,7 @@ button {
     color: var(--moss);
 }
 
-/* ---------- Error Boundary ---------- */
+
 .error-boundary {
     flex: 1;
     display: grid;

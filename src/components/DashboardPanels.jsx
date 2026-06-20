@@ -9,10 +9,16 @@ export function AccountsPanel({ accounts, transactions, onOpenTransfer }) {
             <section>
                 <div className="section-head">
                     <div className="section-title">Accounts</div>
-                    <button className="btn-ghost" onClick={onOpenTransfer}>Move money</button>
+                    <div className="section-sub" style={{ margin: 0 }}>Tap an account to reveal actions</div>
                 </div>
                 <div className="accounts-row" style={{ marginTop: "0.9rem" }}>
-                    {accounts.map((a) => <AccountCard account={a} key={a.id} />)}
+                    {accounts.map((a) => (
+                        <AccountCard
+                            account={a}
+                            key={a.id}
+                            onOpenTransfer={onOpenTransfer}
+                        />
+                    ))}
                 </div>
             </section>
             <section>
@@ -149,7 +155,7 @@ export function CardsPanel({ accounts, onToggleFreeze }) {
                 <div className="section-title">Your cards</div>
                 <div className="accounts-row" style={{ marginTop: "0.9rem" }}>
                     {accounts.map((a) => (
-                        <div className="account-card" key={a.id}>
+                        <div className="account-card" key={a.id} style={{ padding: "1.1rem 1.25rem", border: "1px solid var(--hairline)", borderRadius: "10px", background: "var(--surface)"}}>
                             <div className="account-name">{a.name}</div>
                             <div className="account-number">{a.number}</div>
                             <button className="btn-ghost" onClick={() => onToggleFreeze(a.id)} style={{ marginTop: "0.4rem" }}>
@@ -188,7 +194,7 @@ export function CardsPanel({ accounts, onToggleFreeze }) {
 
 export function FamilyPanel() {
     const members = [
-        { initials: "JM", name: "Jordan (you)", role: "Owner · full access" },
+        { initials: "TH", name: "Tshegofatso (you)", role: "Owner · full access" },
         { initials: "TM", name: "Thandi", role: "Sub-account · R500 weekly limit" },
         { initials: "KM", name: "Kagiso", role: "Viewer · spending visibility only" },
     ];

@@ -10,6 +10,9 @@
     --rust: #b5482d;
     --moss: #6f8f5c;
 
+    /* The missing ease variable for the smooth animations! */
+    --ease: cubic-bezier(0.4, 0, 0.2, 1);
+
     --display: "Fraunces", "Iowan Old Style", serif;
     --body: "Inter", -apple-system, sans-serif;
     --mono: "IBM Plex Mono", "SFMono-Regular", monospace;

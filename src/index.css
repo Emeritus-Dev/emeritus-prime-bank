@@ -197,10 +197,15 @@ button {
     color: var(--rust);
 }
 
-/* ---------- fox vault mark (signature element) ---------- */
+/* ---------- fox vault mark ---------- */
 .fox-mark {
     width: 84px;
     height: 84px;
+}
+
+.fox-mark.size-sm {
+    width: 40px;
+    height: 40px;
 }
 
 .fox-mark .iris {
@@ -217,18 +222,10 @@ button {
 }
 
 @keyframes vault-blink {
-    0% {
-        transform: scaleY(1);
-    }
-    35% {
-        transform: scaleY(0.05);
-    }
-    60% {
-        transform: scaleY(1);
-    }
-    100% {
-        transform: scaleY(0.06);
-    }
+    0% { transform: scaleY(1); }
+    35% { transform: scaleY(0.05); }
+    60% { transform: scaleY(1); }
+    100% { transform: scaleY(0.06); }
 }
 
 .fox-mark .ring {
@@ -240,7 +237,7 @@ button {
     stroke: var(--gold);
 }
 
-/* ---------- dashboard ---------- */
+/* ---------- topbar ---------- */
 .topbar {
     display: flex;
     align-items: center;
@@ -282,15 +279,74 @@ button {
     color: var(--amber);
 }
 
+/* ---------- tab navigation ---------- */
+.tab-nav {
+    position: relative;
+    background: var(--surface);
+    border-bottom: 1px solid var(--hairline);
+    padding: 0 1rem;
+    overflow-x: auto;
+}
+
+.tab-list {
+    position: relative;
+    display: flex;
+    gap: 2px;
+}
+
+.tab-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    background: none;
+    border: none;
+    color: var(--parchment-dim);
+    font-size: 0.82rem;
+    padding: 0.85rem 0.9rem;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.12s ease;
+}
+
+.tab-btn:hover { color: var(--parchment); }
+.tab-btn.is-active { color: var(--amber); }
+.tab-btn:active { transform: scale(0.95); }
+
+.tab-icon {
+    width: 16px;
+    height: 16px;
+    flex: none;
+}
+
+.tab-underline {
+    position: absolute;
+    bottom: 0;
+    height: 2px;
+    background: var(--gold);
+    transition: transform 0.28s ease, width 0.28s ease;
+    transform: translateX(0);
+}
+
+/* ---------- dashboard & core layout ---------- */
 .dashboard {
     flex: 1;
     padding: 1.75rem 1.5rem 3rem;
     max-width: 980px;
     width: 100%;
     margin: 0 auto;
+}
+
+.panel {
     display: flex;
     flex-direction: column;
     gap: 1.75rem;
+    animation: panel-in 0.22s ease;
+}
+
+@keyframes panel-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .welcome-line {
@@ -299,6 +355,25 @@ button {
     font-weight: 500;
 }
 
+.section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.section-title {
+    font-family: var(--display);
+    font-size: 1.05rem;
+    font-weight: 500;
+}
+
+.section-sub {
+    font-size: 0.82rem;
+    color: var(--parchment-dim);
+    margin: 0.2rem 0 0;
+}
+
+/* ---------- cards & lists ---------- */
 .accounts-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -313,7 +388,10 @@ button {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    transition: border-color 0.2s ease, opacity 0.2s ease;
 }
+
+.account-card.is-frozen { opacity: 0.5; }
 
 .account-name {
     font-size: 0.8rem;
@@ -331,18 +409,6 @@ button {
     font-family: var(--mono);
     font-size: 0.72rem;
     color: var(--parchment-dim);
-}
-
-.section-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-}
-
-.section-title {
-    font-family: var(--display);
-    font-size: 1.05rem;
-    font-weight: 500;
 }
 
 .transactions-list {
@@ -399,6 +465,154 @@ button {
     font-size: 0.88rem;
 }
 
+/* ---------- detailed UI elements (bars, toggles, info cards) ---------- */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+}
+
+.info-card {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.info-card-title {
+    font-size: 0.8rem;
+    color: var(--parchment-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.info-card-value {
+    font-family: var(--mono);
+    font-size: 1.3rem;
+}
+
+.info-card-note {
+    font-size: 0.82rem;
+    color: var(--parchment-dim);
+}
+
+.bar-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82rem;
+}
+
+.bar-track {
+    height: 6px;
+    border-radius: 4px;
+    background: var(--surface-raised);
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 4px;
+    transition: width 0.4s ease;
+}
+
+.toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--hairline);
+}
+
+.toggle-row:last-child { border-bottom: none; }
+
+.toggle {
+    position: relative;
+    width: 38px;
+    height: 22px;
+    border-radius: 11px;
+    background: var(--surface-raised);
+    border: 1px solid var(--hairline);
+    cursor: pointer;
+    transition: background 0.2s ease;
+    flex: none;
+}
+
+.toggle.is-on { background: var(--gold); }
+
+.toggle-knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--parchment);
+    transition: transform 0.2s ease;
+}
+
+.toggle.is-on .toggle-knob { transform: translateX(16px); }
+
+/* ---------- family & coach panel specifics ---------- */
+.member-row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--hairline);
+}
+
+.member-row:last-child { border-bottom: none; }
+
+.avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--surface-raised);
+    border: 1px solid var(--hairline);
+    display: grid;
+    place-items: center;
+    font-size: 0.78rem;
+    font-family: var(--mono);
+    flex: none;
+}
+
+.member-meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.member-name { font-size: 0.9rem; }
+.member-role { font-size: 0.74rem; color: var(--parchment-dim); }
+
+.coach-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.coach-bubble {
+    background: var(--surface);
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    padding: 0.9rem 1.1rem;
+    font-size: 0.88rem;
+    display: flex;
+    gap: 0.7rem;
+    align-items: flex-start;
+}
+
+.coach-bubble .fox-mark { margin-top: 2px; }
+
 /* ---------- transfer modal ---------- */
 .modal-backdrop {
     position: fixed;
@@ -443,6 +657,7 @@ button {
     color: var(--moss);
 }
 
+/* ---------- error boundary ---------- */
 .error-boundary {
     flex: 1;
     display: grid;

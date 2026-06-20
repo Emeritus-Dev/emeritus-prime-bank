@@ -2,83 +2,76 @@ import React, { useState } from "react";
 import { ACCOUNTS, TRANSACTIONS } from "../data/mockData.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import FoxMark from "./FoxMark.jsx";
-import AccountCard from "./AccountCard.jsx";
-import TransactionList from "./TransactionList.jsx";
+import TabNav from "./TabNav.jsx";
 import TransferModal from "./TransferModal.jsx";
+import {
+    AccountsPanel, NetWorthPanel, InsightsPanel,
+    GoalsPanel, CardsPanel, FamilyPanel,
+    CarbonPanel, CoachPanel
+} from "./DashboardPanels.jsx";
 
 export default function Dashboard() {
     const { customerName, signOut } = useAuth();
+    const [activeTab, setActiveTab] = useState("accounts");
     const [accounts, setAccounts] = useState(ACCOUNTS);
     const [transactions, setTransactions] = useState(TRANSACTIONS);
     const [isTransferOpen, setIsTransferOpen] = useState(false);
 
     const handleTransfer = ({ fromId, toId, amount }) => {
-        // Update account balances
-        setAccounts((prevAccounts) =>
-            prevAccounts.map((account) => {
-                if (account.id === fromId) {
-                    return { ...account, balance: account.balance - amount };
-                }
-                if (account.id === toId) {
-                    return { ...account, balance: account.balance + amount };
-                }
-                return account;
-            })
-        );
+        setAccounts((prev) => prev.map((a) => {
+            if (a.id === fromId) return { ...a, balance: a.balance - amount };
+            if (a.id === toId) return { ...a, balance: a.balance + amount };
+            return a;
+        }));
 
-        // Create a record for the transaction list
-        const fromAccount = accounts.find((acc) => acc.id === fromId);
-        const toAccount = accounts.find((acc) => acc.id === toId);
+        const fromName = accounts.find((a) => a.id === fromId)?.name || "account";
+        const toName = accounts.find((a) => a.id === toId)?.name || "account";
 
-        const newTransaction = {
+        const newTx = {
             id: `tx-${Date.now()}`,
-            name: `Transfer to ${toAccount?.name || "Account"}`,
+            name: `Transfer: ${fromName} → ${toName}`,
             date: "Just now",
-            amount: -amount,
+            amount: -amount
         };
 
-        setTransactions((prevTransactions) => [newTransaction, ...prevTransactions]);
+        setTransactions((prev) => [newTx, ...prev]);
+    };
+
+    const handleToggleFreeze = (id) => {
+        setAccounts((prev) => prev.map((a) => a.id === id ? { ...a, frozen: !a.frozen } : a));
+    };
+
+    const renderPanel = () => {
+        switch(activeTab) {
+            case "accounts": return <AccountsPanel accounts={accounts} transactions={transactions} onOpenTransfer={() => setIsTransferOpen(true)} />;
+            case "networth": return <NetWorthPanel accounts={accounts} />;
+            case "insights": return <InsightsPanel />;
+            case "goals": return <GoalsPanel />;
+            case "cards": return <CardsPanel accounts={accounts} onToggleFreeze={handleToggleFreeze} />;
+            case "family": return <FamilyPanel />;
+            case "carbon": return <CarbonPanel />;
+            case "coach": return <CoachPanel />;
+            default: return null;
+        }
     };
 
     return (
         <div className="shell">
             <header className="topbar">
                 <div className="topbar-left">
-                    <FoxMark state="verified" />
-                    <div className="topbar-brand">Emeritus Prime</div>
+                    <FoxMark state="verified" small={true} />
+                    <div className="topbar-brand">Emeritus Prime Bank</div>
                 </div>
                 <div className="topbar-right">
-                    <button className="logout-link" onClick={signOut}>
-                        Sign out
-                    </button>
+                    <span style={{ fontSize: "0.8rem", color: "var(--parchment-dim)" }}>Hi, {customerName}</span>
+                    <button className="logout-link" onClick={signOut}>Sign out</button>
                 </div>
             </header>
 
+            <TabNav activeTab={activeTab} onChange={setActiveTab} />
+
             <main className="dashboard">
-                <div className="welcome-line">Welcome back, {customerName}.</div>
-
-                <section>
-                    <div className="section-head">
-                        <div className="section-title">Your Accounts</div>
-                        <button className="btn-ghost" onClick={() => setIsTransferOpen(true)}>
-                            Transfer Funds
-                        </button>
-                    </div>
-                    <div className="accounts-row" style={{ marginTop: "1rem" }}>
-                        {accounts.map((account) => (
-                            <AccountCard account={account} key={account.id} />
-                        ))}
-                    </div>
-                </section>
-
-                <section>
-                    <div className="section-head">
-                        <div className="section-title">Recent Activity</div>
-                    </div>
-                    <div style={{ marginTop: "1rem" }}>
-                        <TransactionList transactions={transactions} />
-                    </div>
-                </section>
+                <div key={activeTab}>{renderPanel()}</div>
             </main>
 
             {isTransferOpen && (

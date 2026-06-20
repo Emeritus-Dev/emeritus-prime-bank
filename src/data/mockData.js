@@ -1,5 +1,6 @@
 export const DEMO_CUSTOMER = {
     firstName: "Jordan",
+    initials: "JM",
     passcode: "1234",
 };
 

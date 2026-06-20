@@ -21,8 +21,7 @@
     box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
     margin: 0;
     padding: 0;
 }
@@ -54,15 +53,13 @@ button {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
+    *, *::before, *::after {
         animation-duration: 0.001ms !important;
         transition-duration: 0.001ms !important;
     }
 }
 
-/* ---------- demo banner ---------- */
+/* ---------- Demo Banner ---------- */
 .demo-banner {
     background: var(--rust);
     color: var(--parchment);
@@ -74,7 +71,7 @@ button {
     text-transform: uppercase;
 }
 
-/* ---------- shell / login ---------- */
+/* ---------- Shell & Login ---------- */
 .shell {
     flex: 1;
     display: flex;
@@ -86,9 +83,7 @@ button {
     display: grid;
     place-items: center;
     padding: 2rem 1.25rem;
-    background:
-            radial-gradient(ellipse 60% 50% at 50% 0%, rgba(201, 162, 39, 0.08), transparent 70%),
-            var(--ink);
+    background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(201, 162, 39, 0.08), transparent 70%), var(--ink);
 }
 
 .login-card {
@@ -160,11 +155,15 @@ button {
     font-weight: 600;
     font-size: 0.92rem;
     cursor: pointer;
-    transition: filter 0.15s ease;
+    transition: filter 0.15s var(--ease), transform 0.1s var(--ease);
 }
 
 .btn-primary:hover {
     filter: brightness(1.08);
+}
+
+.btn-primary:active {
+    transform: scale(0.96);
 }
 
 .btn-ghost {
@@ -179,11 +178,16 @@ button {
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
+    transition: color 0.15s var(--ease), border-color 0.15s var(--ease), transform 0.1s var(--ease);
 }
 
 .btn-ghost:hover {
     color: var(--parchment);
     border-color: var(--gold);
+}
+
+.btn-ghost:active {
+    transform: scale(0.96);
 }
 
 .login-hint {
@@ -197,7 +201,7 @@ button {
     color: var(--rust);
 }
 
-/* ---------- fox vault mark ---------- */
+/* ---------- Foxmark Animation ---------- */
 .fox-mark {
     width: 84px;
     height: 84px;
@@ -210,7 +214,7 @@ button {
 
 .fox-mark .iris {
     transform-origin: 50px 56px;
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.35s var(--ease);
 }
 
 .fox-mark.is-scanning .iris {
@@ -237,12 +241,12 @@ button {
     stroke: var(--gold);
 }
 
-/* ---------- topbar ---------- */
+/* ---------- Topbar & Profile Triggers ---------- */
 .topbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 1.5rem;
+    padding: 0.85rem 1.5rem;
     border-bottom: 1px solid var(--hairline);
     background: var(--surface);
 }
@@ -261,7 +265,7 @@ button {
 .topbar-right {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.6rem;
 }
 
 .logout-link {
@@ -273,13 +277,39 @@ button {
     cursor: pointer;
     text-transform: uppercase;
     letter-spacing: 0.06em;
+    transition: color 0.15s var(--ease);
 }
 
 .logout-link:hover {
     color: var(--amber);
 }
 
-/* ---------- tab navigation ---------- */
+.profile-trigger {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 20px;
+    padding: 0.25rem 0.6rem 0.25rem 0.25rem;
+    cursor: pointer;
+    transition: border-color 0.15s var(--ease), transform 0.1s var(--ease);
+}
+
+.profile-trigger:hover {
+    border-color: var(--hairline);
+}
+
+.profile-trigger:active {
+    transform: scale(0.96);
+}
+
+.profile-trigger-name {
+    font-size: 0.82rem;
+    color: var(--parchment);
+}
+
+/* ---------- Tab Navigation ---------- */
 .tab-nav {
     position: relative;
     background: var(--surface);
@@ -306,12 +336,20 @@ button {
     font-size: 0.82rem;
     padding: 0.85rem 0.9rem;
     cursor: pointer;
-    transition: color 0.2s ease, transform 0.12s ease;
+    transition: color 0.2s var(--ease), transform 0.12s var(--ease);
 }
 
-.tab-btn:hover { color: var(--parchment); }
-.tab-btn.is-active { color: var(--amber); }
-.tab-btn:active { transform: scale(0.95); }
+.tab-btn:hover {
+    color: var(--parchment);
+}
+
+.tab-btn.is-active {
+    color: var(--amber);
+}
+
+.tab-btn:active {
+    transform: scale(0.95);
+}
 
 .tab-icon {
     width: 16px;
@@ -324,11 +362,11 @@ button {
     bottom: 0;
     height: 2px;
     background: var(--gold);
-    transition: transform 0.28s ease, width 0.28s ease;
+    transition: transform 0.28s var(--ease), width 0.28s var(--ease);
     transform: translateX(0);
 }
 
-/* ---------- dashboard & core layout ---------- */
+/* ---------- Dashboard & Core Layout ---------- */
 .dashboard {
     flex: 1;
     padding: 1.75rem 1.5rem 3rem;
@@ -341,7 +379,7 @@ button {
     display: flex;
     flex-direction: column;
     gap: 1.75rem;
-    animation: panel-in 0.22s ease;
+    animation: panel-in 0.22s var(--ease);
 }
 
 @keyframes panel-in {
@@ -373,7 +411,7 @@ button {
     margin: 0.2rem 0 0;
 }
 
-/* ---------- cards & lists ---------- */
+/* ---------- Accounts & Lists ---------- */
 .accounts-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -388,10 +426,12 @@ button {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    transition: border-color 0.2s ease, opacity 0.2s ease;
+    transition: border-color 0.2s var(--ease), opacity 0.2s var(--ease);
 }
 
-.account-card.is-frozen { opacity: 0.5; }
+.account-card.is-frozen {
+    opacity: 0.5;
+}
 
 .account-name {
     font-size: 0.8rem;
@@ -465,7 +505,7 @@ button {
     font-size: 0.88rem;
 }
 
-/* ---------- detailed UI elements (bars, toggles, info cards) ---------- */
+/* ---------- Info Cards & Data Visuals ---------- */
 .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -522,9 +562,10 @@ button {
     height: 100%;
     background: var(--gold);
     border-radius: 4px;
-    transition: width 0.4s ease;
+    transition: width 0.4s var(--ease);
 }
 
+/* ---------- Toggles & Controls ---------- */
 .toggle-row {
     display: flex;
     align-items: center;
@@ -533,7 +574,9 @@ button {
     border-bottom: 1px solid var(--hairline);
 }
 
-.toggle-row:last-child { border-bottom: none; }
+.toggle-row:last-child {
+    border-bottom: none;
+}
 
 .toggle {
     position: relative;
@@ -543,11 +586,13 @@ button {
     background: var(--surface-raised);
     border: 1px solid var(--hairline);
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: background 0.2s var(--ease);
     flex: none;
 }
 
-.toggle.is-on { background: var(--gold); }
+.toggle.is-on {
+    background: var(--gold);
+}
 
 .toggle-knob {
     position: absolute;
@@ -557,12 +602,14 @@ button {
     height: 16px;
     border-radius: 50%;
     background: var(--parchment);
-    transition: transform 0.2s ease;
+    transition: transform 0.2s var(--ease);
 }
 
-.toggle.is-on .toggle-knob { transform: translateX(16px); }
+.toggle.is-on .toggle-knob {
+    transform: translateX(16px);
+}
 
-/* ---------- family & coach panel specifics ---------- */
+/* ---------- Members & Coach Panels ---------- */
 .member-row {
     display: flex;
     align-items: center;
@@ -571,7 +618,9 @@ button {
     border-bottom: 1px solid var(--hairline);
 }
 
-.member-row:last-child { border-bottom: none; }
+.member-row:last-child {
+    border-bottom: none;
+}
 
 .avatar {
     width: 34px;
@@ -586,13 +635,25 @@ button {
     flex: none;
 }
 
+.avatar.size-sm {
+    width: 26px;
+    height: 26px;
+    font-size: 0.66rem;
+}
+
 .member-meta {
     display: flex;
     flex-direction: column;
 }
 
-.member-name { font-size: 0.9rem; }
-.member-role { font-size: 0.74rem; color: var(--parchment-dim); }
+.member-name {
+    font-size: 0.9rem;
+}
+
+.member-role {
+    font-size: 0.74rem;
+    color: var(--parchment-dim);
+}
 
 .coach-feed {
     display: flex;
@@ -611,9 +672,124 @@ button {
     align-items: flex-start;
 }
 
-.coach-bubble .fox-mark { margin-top: 2px; }
+.coach-bubble .fox-mark {
+    margin-top: 2px;
+}
 
-/* ---------- transfer modal ---------- */
+/* ---------- Profile Screen & 3D Flip Tiles ---------- */
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    color: var(--parchment-dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    transition: color 0.15s var(--ease), background 0.15s var(--ease), transform 0.1s var(--ease);
+}
+
+.back-btn:hover {
+    color: var(--parchment);
+    background: var(--surface-raised);
+}
+
+.back-btn:active {
+    transform: scale(0.92);
+}
+
+.profile-section-title {
+    font-family: var(--display);
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 0 0 0.9rem;
+}
+
+.tile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+}
+
+.tile {
+    perspective: 900px;
+    height: 118px;
+}
+
+.tile-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.45s var(--ease);
+    transform-style: preserve-3d;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.tile.is-flipped .tile-inner {
+    transform: rotateY(180deg);
+}
+
+.tile-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 10px;
+    border: 1px solid var(--hairline);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    text-align: center;
+}
+
+.tile-front {
+    background: var(--surface);
+    color: var(--parchment);
+    transition: border-color 0.2s var(--ease);
+}
+
+.tile.is-flipped .tile-front {
+    border-color: var(--gold);
+}
+
+.tile-front-label {
+    font-size: 0.78rem;
+    line-height: 1.25;
+}
+
+.tile-back {
+    background: var(--surface-raised);
+    color: var(--parchment-dim);
+    transform: rotateY(180deg);
+    font-size: 0.74rem;
+    line-height: 1.35;
+}
+
+.tile-back-title {
+    color: var(--amber);
+    font-size: 0.76rem;
+    font-weight: 500;
+}
+
+.tile-icon {
+    width: 26px;
+    height: 26px;
+    flex: none;
+}
+
+/* ---------- Modals ---------- */
 .modal-backdrop {
     position: fixed;
     inset: 0;
@@ -647,8 +823,7 @@ button {
     margin-top: 0.4rem;
 }
 
-.modal-actions .btn-primary,
-.modal-actions .btn-ghost {
+.modal-actions .btn-primary, .modal-actions .btn-ghost {
     flex: 1;
 }
 
@@ -657,7 +832,7 @@ button {
     color: var(--moss);
 }
 
-/* ---------- error boundary ---------- */
+/* ---------- Error Boundary ---------- */
 .error-boundary {
     flex: 1;
     display: grid;

@@ -6,13 +6,13 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    // Clean, standard arrow functions. No need for over-engineered useCallbacks here!
     const signIn = () => setIsAuthenticated(true);
     const signOut = () => setIsAuthenticated(false);
 
     const value = {
         isAuthenticated,
         customerName: DEMO_CUSTOMER.firstName,
+        initials: DEMO_CUSTOMER.initials,
         signIn,
         signOut,
     };
@@ -20,7 +20,6 @@ export function AuthProvider({ children }) {
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-// Custom hook to make grabbing auth state easier in the components
 export function useAuth() {
     const context = useContext(AuthContext);
     if (!context) {

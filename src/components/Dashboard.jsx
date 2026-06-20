@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import FoxMark from "./FoxMark.jsx";
 import TabNav from "./TabNav.jsx";
 import TransferModal from "./TransferModal.jsx";
+import ProfileScreen from "./ProfileScreen.jsx";
 import {
     AccountsPanel, NetWorthPanel, InsightsPanel,
     GoalsPanel, CardsPanel, FamilyPanel,
@@ -11,7 +12,9 @@ import {
 } from "./DashboardPanels.jsx";
 
 export default function Dashboard() {
-    const { customerName, signOut } = useAuth();
+    const { customerName, initials, signOut } = useAuth();
+
+    const [view, setView] = useState("dashboard");
     const [activeTab, setActiveTab] = useState("accounts");
     const [accounts, setAccounts] = useState(ACCOUNTS);
     const [transactions, setTransactions] = useState(TRANSACTIONS);
@@ -63,16 +66,24 @@ export default function Dashboard() {
                     <div className="topbar-brand">Emeritus Prime Bank</div>
                 </div>
                 <div className="topbar-right">
-                    <span style={{ fontSize: "0.8rem", color: "var(--parchment-dim)" }}>Hi, {customerName}</span>
+                    <button className="profile-trigger" onClick={() => setView("profile")}>
+                        <div className="avatar size-sm">{initials}</div>
+                        <span className="profile-trigger-name">{customerName}</span>
+                    </button>
                     <button className="logout-link" onClick={signOut}>Sign out</button>
                 </div>
             </header>
 
-            <TabNav activeTab={activeTab} onChange={setActiveTab} />
-
-            <main className="dashboard">
-                <div key={activeTab}>{renderPanel()}</div>
-            </main>
+            {view === "profile" ? (
+                <ProfileScreen onBack={() => setView("dashboard")} />
+            ) : (
+                <>
+                    <TabNav activeTab={activeTab} onChange={setActiveTab} />
+                    <main className="dashboard">
+                        <div key={activeTab}>{renderPanel()}</div>
+                    </main>
+                </>
+            )}
 
             {isTransferOpen && (
                 <TransferModal

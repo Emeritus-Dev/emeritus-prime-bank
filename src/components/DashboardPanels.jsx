@@ -1,276 +1,386 @@
 import React, { useState } from "react";
-import AccountCard from "./AccountCard.jsx";
-import TransactionList from "./TransactionList.jsx";
+import CreditCard from "./CreditCard.jsx";
 import FoxMark from "./FoxMark.jsx";
 
-export function AccountsPanel({ accounts, transactions, onOpenTransfer }) {
-    return (
-        <div className="panel">
-            <section>
-                <div className="section-head">
-                    <div className="section-title">Accounts</div>
-                    <div className="section-sub" style={{ margin: 0 }}>Tap an account to reveal actions</div>
-                </div>
-                <div className="accounts-row" style={{ marginTop: "0.9rem" }}>
-                    {accounts.map((a) => (
-                        <AccountCard
-                            account={a}
-                            key={a.id}
-                            onOpenTransfer={onOpenTransfer}
-                        />
-                    ))}
-                </div>
-            </section>
-            <section>
-                <div className="section-head"><div className="section-title">Recent activity</div></div>
-                <div style={{ marginTop: "0.9rem" }}><TransactionList transactions={transactions} /></div>
-            </section>
-        </div>
-    );
-}
+/* ==========================================================================
+   1. ACCOUNTS PANEL (SLIDING CARDS WITH MASKED BALANCES RESTORED)
+   ========================================================================== */
+export function AccountsPanel({ accounts = [], onOpenTransfer }) {
+    // Tracks which account card is currently slid open
+    const [slidAccountId, setSlidAccountId] = useState(null);
 
-export function NetWorthPanel({ accounts }) {
-    const bankTotal = accounts.reduce((sum, a) => sum + a.balance, 0);
-    const external = [
-        { name: "Old Mutual Invest", value: 32140.0, linked: true },
-        { name: "Luno wallet", value: 4380.0, linked: true },
-    ];
-    const externalTotal = external.reduce((sum, e) => sum + e.value, 0);
+    const handleCardClick = (id) => {
+        setSlidAccountId((prev) => (prev === id ? null : id));
+    };
 
     return (
         <div className="panel">
-            <div className="card-grid">
-                <div className="info-card">
-                    <div className="info-card-title">This bank</div>
-                    <div className="info-card-value">${bankTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
-                    <div className="info-card-note">Across {accounts.length} accounts</div>
+            <div className="section-head">
+                <div>
+                    <h2 className="section-title">Accounts & Liquidity</h2>
+                    <p className="section-sub">Overview of active liquid balances and operational capital.</p>
                 </div>
-                <div className="info-card">
-                    <div className="info-card-title">Linked elsewhere</div>
-                    <div className="info-card-value">${externalTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
-                    <div className="info-card-note">Via open-banking style links, simulated for this demo</div>
-                </div>
-                <div className="info-card">
-                    <div className="info-card-title">Combined net worth</div>
-                    <div className="info-card-value">${(bankTotal + externalTotal).toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
-                    <div className="info-card-note">What most apps never show you in one place</div>
-                </div>
+                {onOpenTransfer && (
+                    <button className="btn-primary" onClick={onOpenTransfer} style={{ fontSize: "0.8rem", padding: "0.4rem 0.8rem" }}>
+                        + Transfer Funds
+                    </button>
+                )}
             </div>
-            <section>
-                <div className="section-title">Linked accounts</div>
-                <div className="transactions-list" style={{ marginTop: "0.9rem" }}>
-                    {external.map((e) => (
-                        <div className="transaction-row" key={e.name}>
-                            <div className="tx-meta"><div className="tx-name">{e.name}</div><div className="tx-date">Linked, read-only</div></div>
-                            <div className="tx-amount positive">${e.value.toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
-                        </div>
-                    ))}
-                </div>
-            </section>
-        </div>
-    );
-}
 
-export function InsightsPanel() {
-    const categories = [
-        { label: "Housing", pct: 38 }, { label: "Groceries", pct: 21 },
-        { label: "Subscriptions", pct: 9 }, { label: "Transport", pct: 14 },
-        { label: "Everything else", pct: 18 },
-    ];
-    return (
-        <div className="panel">
-            <div className="info-card">
-                <div className="info-card-title">Cash-flow forecast</div>
-                <div className="info-card-value">R820 buffer by payday</div>
-                <div className="info-card-note">At your current pace, you're projected to stay positive through the end of the month.</div>
-            </div>
-            <section>
-                <div className="section-title">Where it's going this month</div>
-                <div style={{ marginTop: "0.9rem", display: "flex", flexDirection: "column", gap: "0.7rem" }}>
-                    {categories.map((c) => (
-                        <div className="bar-row" key={c.label}>
-                            <div className="bar-label"><span>{c.label}</span><span>{c.pct}%</span></div>
-                            <div className="bar-track"><div className="bar-fill" style={{ width: `${c.pct}%` }} /></div>
-                        </div>
-                    ))}
-                </div>
-            </section>
-        </div>
-    );
-}
+            <div className="accounts-row">
+                {accounts.length > 0 ? (
+                    accounts.map((acc) => {
+                        const isSlid = slidAccountId === acc.id;
+                        const isFrozen = acc.frozen || acc.isFrozen || false;
 
-export function GoalsPanel() {
-    const [roundUp, setRoundUp] = useState(true);
-    const goals = [
-        { name: "Emergency fund", saved: 9300, target: 15000 },
-        { name: "New laptop", saved: 3600, target: 12000 },
-    ];
-    return (
-        <div className="panel">
-            <section>
-                <div className="section-title">Goals</div>
-                <div style={{ marginTop: "0.9rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
-                    {goals.map((g) => {
-                        const pct = Math.round((g.saved / g.target) * 100);
                         return (
-                            <div className="bar-row" key={g.name}>
-                                <div className="bar-label"><span>{g.name}</span><span>R{g.saved.toLocaleString()} of R{g.target.toLocaleString()}</span></div>
-                                <div className="bar-track"><div className="bar-fill" style={{ width: `${pct}%` }} /></div>
+                            <div
+                                key={acc.id || acc.accountNumber}
+                                className={`account-slider-container${isFrozen ? " is-frozen" : ""}`}
+                            >
+                                {/* REVEALED BACKGROUND PANEL (Reveals actual balance & quick actions on slide) */}
+                                <div className="account-actions-bg">
+                                    <div>
+                                        <div className="revealed-label">Available Balance</div>
+                                        <div className="revealed-amount">
+                                            R {Number(acc.balance || 0).toLocaleString("en-ZA", { minimumFractionDigits: 2 })}
+                                        </div>
+                                    </div>
+
+                                    <div className="quick-actions-row">
+                                        <button
+                                            type="button"
+                                            className="action-pill"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                if (onOpenTransfer) onOpenTransfer();
+                                            }}
+                                        >
+                                            Transfer
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="action-pill"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                alert(`Downloading statement for ${acc.name}...`);
+                                            }}
+                                        >
+                                            Statement
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* SLIDING FRONT CARD (Masked Balance State) */}
+                                <div
+                                    className={`account-front${isSlid ? " is-slid" : ""}`}
+                                    onClick={() => handleCardClick(acc.id)}
+                                >
+                                    <div className="front-header">
+                                        <div className="front-header-left">
+                                            <span className="account-name">{acc.name}</span>
+                                            <span className="account-number">{acc.accountNumber}</span>
+                                        </div>
+                                        <span className="action-pill" style={{ fontSize: "0.65rem" }}>
+                                            {acc.type || "Cheque"}
+                                        </span>
+                                    </div>
+
+                                    <div className="front-footer">
+                                        <div>
+                                            <div className="revealed-label" style={{ fontSize: "0.65rem" }}>Balance</div>
+                                            <div className="masked-balance">••••••••</div>
+                                        </div>
+                                        <span className="slide-hint">
+                                            {isSlid ? "Close ❮" : "Slide to reveal ❯"}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         );
-                    })}
-                </div>
-            </section>
-            <section>
-                <div className="section-title">Automation</div>
-                <div className="transactions-list" style={{ marginTop: "0.9rem", padding: "0 1.25rem" }}>
-                    <div className="toggle-row">
-                        <div>
-                            <div className="tx-name">Round up purchases</div>
-                            <div className="tx-date">Spare change from every purchase goes to Emergency fund</div>
-                        </div>
-                        <button
-                            type="button"
-                            className={`toggle${roundUp ? " is-on" : ""}`}
-                            role="switch"
-                            aria-checked={roundUp}
-                            onClick={() => setRoundUp(!roundUp)}
-                        >
-                            <span className="toggle-knob" />
-                        </button>
-                    </div>
-                </div>
-            </section>
+                    })
+                ) : (
+                    <div className="empty-state">No accounts linked.</div>
+                )}
+            </div>
         </div>
     );
 }
 
-export function CardsPanel({ accounts, onToggleFreeze }) {
-    const [locks, setLocks] = useState({ online: false, gambling: true, international: true });
-    const toggleLock = (key) => setLocks((prev) => ({ ...prev, [key]: !prev[key] }));
+/* ==========================================================================
+   2. CARDS PANEL (PHYSICAL 3D FLIPPABLE CARDS)
+   ========================================================================== */
+export function CardsPanel({ accounts = [], onToggleFreeze }) {
+    const [showNumbersMap, setShowNumbersMap] = useState({});
+
+    const toggleShowNumbers = (id) => {
+        setShowNumbersMap((prev) => ({ ...prev, [id]: !prev[id] }));
+    };
 
     return (
         <div className="panel">
-            <section>
-                <div className="section-title">Your cards</div>
-                <div className="accounts-row" style={{ marginTop: "0.9rem" }}>
-                    {accounts.map((a) => (
-                        <div className="account-card" key={a.id} style={{ padding: "1.1rem 1.25rem", border: "1px solid var(--hairline)", borderRadius: "10px", background: "var(--surface)"}}>
-                            <div className="account-name">{a.name}</div>
-                            <div className="account-number">{a.number}</div>
-                            <button className="btn-ghost" onClick={() => onToggleFreeze(a.id)} style={{ marginTop: "0.4rem" }}>
-                                {a.frozen ? "Unfreeze card" : "Freeze card"}
-                            </button>
-                        </div>
-                    ))}
-                </div>
-            </section>
-            <section>
-                <div className="section-title">Merchant locks</div>
-                <div className="transactions-list" style={{ marginTop: "0.9rem", padding: "0 1.25rem" }}>
-                    {[
-                        { key: "online", label: "Block online purchases" },
-                        { key: "gambling", label: "Block gambling merchants" },
-                        { key: "international", label: "Block international charges" },
-                    ].map((item) => (
-                        <div className="toggle-row" key={item.key}>
-                            <div className="tx-name">{item.label}</div>
-                            <button
-                                type="button"
-                                className={`toggle${locks[item.key] ? " is-on" : ""}`}
-                                role="switch"
-                                aria-checked={locks[item.key]}
-                                onClick={() => toggleLock(item.key)}
-                            >
-                                <span className="toggle-knob" />
-                            </button>
-                        </div>
-                    ))}
-                </div>
-            </section>
+            <div>
+                <h2 className="section-title">My Physical & Digital Cards</h2>
+                <p className="section-sub">Tap any credit card to flip 180° and reveal the security CVV and signature strip.</p>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "2rem", marginTop: "0.5rem" }}>
+                {accounts.length > 0 ? (
+                    accounts.map((acc) => {
+                        const isFrozen = acc.frozen || acc.isFrozen || false;
+                        const isNumberVisible = !!showNumbersMap[acc.id];
+
+                        return (
+                            <div key={acc.id} style={{ background: "var(--surface)", border: "1px solid var(--hairline)", borderRadius: "14px", padding: "1.5rem 1rem", display: "flex", flexDirection: "column", gap: "1.2rem", alignItems: "center" }}>
+                                {/* 3D FLIPPABLE CARD */}
+                                <CreditCard
+                                    accountName={acc.name}
+                                    accountNumber={acc.accountNumber || "4209 5467 8900 0210"}
+                                    holderName="TSHEGOFATSO HLABELA"
+                                    expiry="08/28"
+                                    cvv="963"
+                                    isFrozen={isFrozen}
+                                    showFullNumber={isNumberVisible}
+                                />
+
+                                {/* DEDICATED CARD CONTROLS */}
+                                <div style={{ width: "100%", maxWidth: "330px", display: "flex", flexDirection: "column", gap: "0.6rem" }}>
+                                    <div className="toggle-row" style={{ padding: "0.4rem 0" }}>
+                                        <div>
+                                            <div className="tx-name" style={{ fontSize: "0.82rem" }}>
+                                                {isFrozen ? "Card Frozen" : "Card Active"}
+                                            </div>
+                                            <div className="tx-date" style={{ fontSize: "0.7rem" }}>
+                                                {isFrozen ? "Swipes and online payments are blocked" : "Ready for point-of-sale swipes"}
+                                            </div>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            className={`toggle${isFrozen ? " is-on" : ""}`}
+                                            onClick={() => onToggleFreeze && onToggleFreeze(acc.id)}
+                                        >
+                                            <span className="toggle-knob" />
+                                        </button>
+                                    </div>
+
+                                    <div className="toggle-row" style={{ padding: "0.4rem 0" }}>
+                                        <div>
+                                            <div className="tx-name" style={{ fontSize: "0.82rem" }}>Show PAN & CVV</div>
+                                            <div className="tx-date" style={{ fontSize: "0.7rem" }}>Unhide 16-digit number on screen</div>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            className={`toggle${isNumberVisible ? " is-on" : ""}`}
+                                            onClick={() => toggleShowNumbers(acc.id)}
+                                        >
+                                            <span className="toggle-knob" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        );
+                    })
+                ) : (
+                    <div className="empty-state">No card facilities available.</div>
+                )}
+            </div>
         </div>
     );
 }
 
-export function FamilyPanel() {
-    const members = [
-        { initials: "TH", name: "Tshegofatso (you)", role: "Owner · full access" },
-        { initials: "TM", name: "Thandi", role: "Sub-account · R500 weekly limit" },
-        { initials: "KM", name: "Kagiso", role: "Viewer · spending visibility only" },
-    ];
+/* ==========================================================================
+   3. ACTIVITY PANEL
+   ========================================================================== */
+export function ActivityPanel({ transactions = [] }) {
     return (
         <div className="panel">
-            <section>
-                <div className="section-head">
-                    <div className="section-title">Family</div>
-                    <button className="btn-ghost">Invite member</button>
-                </div>
-                <div className="transactions-list" style={{ marginTop: "0.9rem" }}>
-                    {members.map((m) => (
-                        <div className="member-row" key={m.initials} style={{ padding: "0.7rem 1.25rem" }}>
-                            <div className="avatar">{m.initials}</div>
-                            <div className="member-meta">
-                                <div className="member-name">{m.name}</div>
-                                <div className="member-role">{m.role}</div>
+            <div>
+                <h2 className="section-title">Recent Activity</h2>
+                <p className="section-sub">Real-time audit log of postings and debits.</p>
+            </div>
+
+            <div className="transactions-list">
+                {transactions.length > 0 ? (
+                    transactions.map((tx) => (
+                        <div key={tx.id} className="transaction-row">
+                            <div className="tx-meta">
+                                <div className="tx-name">{tx.name}</div>
+                                <div className="tx-date">{tx.date}</div>
+                            </div>
+                            <div className={`tx-amount ${tx.amount > 0 ? "positive" : "negative"}`}>
+                                {tx.amount > 0 ? "+" : ""}R {Math.abs(tx.amount).toFixed(2)}
                             </div>
                         </div>
-                    ))}
-                </div>
-            </section>
+                    ))
+                ) : (
+                    <div className="empty-state">No recent activity found.</div>
+                )}
+            </div>
         </div>
     );
 }
 
-export function CarbonPanel() {
-    const breakdown = [
-        { label: "Transport", pct: 34 }, { label: "Groceries", pct: 26 },
-        { label: "Utilities", pct: 22 }, { label: "Everything else", pct: 18 },
-    ];
+/* ==========================================================================
+   4. NET WORTH PANEL
+   ========================================================================== */
+export function NetWorthPanel() {
     return (
         <div className="panel">
+            <div>
+                <h2 className="section-title">Net Worth & Holdings</h2>
+                <p className="section-sub">Consolidated asset valuation minus total liabilities.</p>
+            </div>
+
             <div className="card-grid">
                 <div className="info-card">
-                    <div className="info-card-title">This month</div>
-                    <div className="info-card-value">142 kg CO₂e</div>
-                    <div className="info-card-note">Estimated from your transaction categories</div>
+                    <div className="info-card-title">Total Assets</div>
+                    <div className="info-card-value" style={{ color: "var(--moss)" }}>R 1,245,000.00</div>
+                    <div className="info-card-note">Includes Equities, Property & Cash</div>
                 </div>
+
                 <div className="info-card">
-                    <div className="info-card-title">Vs last month</div>
-                    <div className="info-card-value">−8%</div>
-                    <div className="info-card-note">Mostly from fewer fuel purchases</div>
+                    <div className="info-card-title">Total Liabilities</div>
+                    <div className="info-card-value" style={{ color: "var(--rust)" }}>R 185,000.00</div>
+                    <div className="info-card-note">Vehicle finance & credit</div>
+                </div>
+
+                <div className="info-card">
+                    <div className="info-card-title">Net Wealth</div>
+                    <div className="info-card-value" style={{ color: "var(--gold)" }}>R 1,060,000.00</div>
+                    <div className="info-card-note">▲ 4.2% increase this quarter</div>
                 </div>
             </div>
-            <section>
-                <div className="section-title">Breakdown</div>
-                <div style={{ marginTop: "0.9rem", display: "flex", flexDirection: "column", gap: "0.7rem" }}>
-                    {breakdown.map((b) => (
-                        <div className="bar-row" key={b.label}>
-                            <div className="bar-label"><span>{b.label}</span><span>{b.pct}%</span></div>
-                            <div className="bar-track"><div className="bar-fill" style={{ width: `${b.pct}%` }} /></div>
-                        </div>
-                    ))}
-                </div>
-            </section>
         </div>
     );
 }
 
-export function CoachPanel() {
-    const messages = [
-        "You're on track to save about R450 this month if you skip three takeaway orders.",
-        "Your Vault Savings balance hasn't moved in 9 days — want to set up an automatic weekly transfer?",
-        "Subscriptions detected: R649/month across 4 services. Want a breakdown?",
-    ];
+/* ==========================================================================
+   5. INSIGHTS PANEL
+   ========================================================================== */
+export function InsightsPanel() {
     return (
         <div className="panel">
-            <div className="section-title">Coach</div>
-            <div className="coach-feed">
-                {messages.map((m, i) => (
-                    <div className="coach-bubble" key={i}>
-                        <FoxMark state="verified" small={true} />
-                        <span>{m}</span>
+            <div>
+                <h2 className="section-title">Financial Insights</h2>
+                <p className="section-sub">Automated spending analysis by category.</p>
+            </div>
+
+            <div className="transactions-list">
+                <div className="transaction-row">
+                    <div className="tx-meta">
+                        <div className="tx-name">Investments & Savings</div>
+                        <div className="bar-track" style={{ width: "160px", marginTop: "4px" }}>
+                            <div className="bar-fill" style={{ width: "65%" }} />
+                        </div>
                     </div>
-                ))}
+                    <div className="tx-amount">R 12,500.00</div>
+                </div>
+
+                <div className="transaction-row">
+                    <div className="tx-meta">
+                        <div className="tx-name">Utilities & Operational Costs</div>
+                        <div className="bar-track" style={{ width: "160px", marginTop: "4px" }}>
+                            <div className="bar-fill" style={{ width: "40%", background: "var(--amber)" }} />
+                        </div>
+                    </div>
+                    <div className="tx-amount">R 4,200.00</div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+/* ==========================================================================
+   6. GOALS PANEL
+   ========================================================================== */
+export function GoalsPanel() {
+    return (
+        <div className="panel">
+            <div>
+                <h2 className="section-title">Capital Goals</h2>
+                <p className="section-sub">Targeted savings vaults with automated monthly allocations.</p>
+            </div>
+
+            <div className="card-grid">
+                <div className="info-card">
+                    <div className="info-card-title">Emeritus Emergency Vault</div>
+                    <div className="info-card-value">R 45,000 / R 50,000</div>
+                    <div className="bar-track">
+                        <div className="bar-fill" style={{ width: "90%" }} />
+                    </div>
+                    <div className="info-card-note">90% achieved • R5,000 remaining</div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+/* ==========================================================================
+   7. FAMILY PANEL
+   ========================================================================== */
+export function FamilyPanel() {
+    return (
+        <div className="panel">
+            <div>
+                <h2 className="section-title">Family Wealth Hub</h2>
+                <p className="section-sub">Linked dependent sub-accounts and allowance caps.</p>
+            </div>
+
+            <div className="transactions-list">
+                <div className="member-row" style={{ padding: "1rem" }}>
+                    <div className="avatar">TH</div>
+                    <div className="member-meta" style={{ flex: 1 }}>
+                        <div className="member-name">Junior Sub-Account</div>
+                        <div className="member-role">Weekly Cap: R500.00 • Read-only viewer</div>
+                    </div>
+                    <button type="button" className="action-pill">Manage Cap</button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+/* ==========================================================================
+   8. CARBON PANEL
+   ========================================================================== */
+export function CarbonPanel() {
+    return (
+        <div className="panel">
+            <div>
+                <h2 className="section-title">Carbon Offsetting & Impact</h2>
+                <p className="section-sub">Calculated footprint score based on digital transactions.</p>
+            </div>
+
+            <div className="info-card">
+                <div className="info-card-title">Monthly Footprint Estimator</div>
+                <div className="info-card-value" style={{ color: "var(--moss)" }}>142 kg CO₂e</div>
+                <div className="info-card-note">▼ 12% lower than regional average in Western Cape.</div>
+            </div>
+        </div>
+    );
+}
+
+/* ==========================================================================
+   9. COACH PANEL
+   ========================================================================== */
+export function CoachPanel() {
+    return (
+        <div className="panel">
+            <div>
+                <h2 className="section-title">Emeritus Private Coach</h2>
+                <p className="section-sub">Algorithmic advisory for portfolio optimization.</p>
+            </div>
+
+            <div className="coach-feed">
+                <div className="coach-bubble">
+                    <FoxMark small={true} />
+                    <div>
+                        <strong style={{ color: "var(--amber)", fontSize: "0.88rem" }}>Liquidity Advisory:</strong>
+                        <p style={{ margin: "0.3rem 0 0", fontSize: "0.82rem", lineHeight: 1.4, color: "var(--parchment-dim)" }}>
+                            You have an unallocated surplus in your Premier Cheque account. Moving this to your high-yield call facility could earn an additional 8.2% APY.
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     );

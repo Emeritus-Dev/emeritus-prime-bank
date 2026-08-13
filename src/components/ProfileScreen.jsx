@@ -1,7 +1,16 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 
-// Reusable local icon component for the tiles
+// Import modular settings modals from profile/settings/
+import UsernamePinModal from "./profile/settings/UsernamePinModal.jsx";
+import DailyLimitModal from "./profile/settings/DailyLimitModal.jsx";
+import PrivacyModeModal from "./profile/settings/PrivacyModeModal.jsx";
+import DuressModeModal from "./profile/settings/DuressModeModal.jsx";
+import ChannelsDevicesModal from "./profile/settings/ChannelsDevicesModal.jsx";
+import DataPermissionsModal from "./profile/settings/DataPermissionsModal.jsx";
+import BiometricsModal from "./profile/settings/BiometricsModal.jsx";
+
+// Icon Component
 function Icon({ d, className = "tile-icon" }) {
     return (
         <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -12,7 +21,6 @@ function Icon({ d, className = "tile-icon" }) {
 
 const TILE_ICONS = {
     username: <Icon d={<><circle cx="12" cy="8" r="3.4" /><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6" /></>} />,
-    pin: <Icon d={<><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></>} />,
     limit: <Icon d={<><path d="M4 19h16" /><path d="M7 19V11" /><path d="M12 19V5" /><path d="M17 19v-7" /></>} />,
     biometrics: <Icon d={<><path d="M12 3a8 8 0 0 1 8 8c0 3-1 5-2 6.5" /><path d="M12 3a8 8 0 0 0-8 8c0 2 .3 3.6 1 5" /><path d="M9 18c-1.2-1.4-2-3.2-2-5a5 5 0 0 1 10 0c0 1.1-.1 2-.4 3" /><path d="M12 8v5c0 1 .3 1.8.8 2.4" /></>} />,
     mandates: <Icon d={<><rect x="4" y="3" width="16" height="18" rx="2" /><path d="M8 8h8" /><path d="M8 12h8" /><path d="M8 16h5" /></>} />,
@@ -31,77 +39,44 @@ const TILE_ICONS = {
 };
 
 const SETTINGS_TILES = [
-    { id: "username", label: "Username & PIN", icon: "username", description: "Update your login name and change your PIN." },
-    { id: "limit", label: "Daily limit", icon: "limit", description: "Set how much can move out of your accounts per day." },
-    { id: "biometrics", label: "Biometrics", icon: "biometrics", description: "Manage face or fingerprint sign-in for this device." },
-    { id: "mandates", label: "Mandate manager", icon: "mandates", description: "See every debit order mandate and dispute one in a tap." },
-    { id: "privacy", label: "Privacy mode", icon: "privacy", description: "Hide specific accounts or blur all balances on screen." },
-    { id: "permissions", label: "Data permissions", icon: "permissions", description: "Every third party with access to your data, and a revoke button." },
-    { id: "channels", label: "Channels & devices", icon: "channels", description: "Registered devices, cellphone banking, and OTP delivery." },
-    { id: "duress", label: "Duress mode", icon: "duress", description: "A second PIN that opens a decoy view and quietly alerts the bank." },
+    { id: "username", label: "Username & PIN", icon: "username", description: "Manage login username & 4-digit PIN." },
+    { id: "limit", label: "Daily limit", icon: "limit", description: "Adjust transfer limits with step-up verification." },
+    { id: "biometrics", label: "Biometrics", icon: "biometrics", description: "Device face & touch access controls." },
+    { id: "mandates", label: "Mandate manager", icon: "mandates", description: "Track active debit orders & disputes." },
+    { id: "privacy", label: "Privacy mode", icon: "privacy", description: "Shoulder-surfer balance blurring." },
+    { id: "permissions", label: "Data permissions", icon: "permissions", description: "Open-banking access revocation." },
+    { id: "channels", label: "Channels & devices", icon: "channels", description: "Active login session management." },
+    { id: "duress", label: "Duress mode", icon: "duress", description: "Emergency decoy PIN configuration." },
 ];
 
 const PROFILE_TILES = [
-    { id: "personal", label: "Personal info", icon: "personal", description: "Your contact details, address, and ID information." },
-    { id: "family", label: "My family", icon: "family2", description: "Manage who has sub-accounts, limits, or viewer access." },
-    { id: "regulatory", label: "Regulatory details", icon: "regulatory", description: "FICA and compliance status, in plain language." },
-    { id: "vault", label: "Document vault", icon: "vault", description: "ID, proof of address, and other documents, stored securely." },
-    { id: "work", label: "Work info", icon: "work", description: "Employer and income details on file." },
-    { id: "activity", label: "Activity history", icon: "activity", description: "Logins, devices, and account changes over time." },
-    { id: "actioncentre", label: "Action centre", icon: "actioncentre", description: "Things worth doing: expiring docs, missing beneficiaries, and more." },
-    { id: "preferences", label: "Preferences", icon: "preferences", description: "Language, notifications, and accessibility settings." },
+    { id: "personal", label: "Personal info", icon: "personal", description: "Contact details & address records." },
+    { id: "family", label: "My family", icon: "family2", description: "Family sub-accounts & view limits." },
+    { id: "regulatory", label: "Regulatory details", icon: "regulatory", description: "FICA compliance & tax status." },
+    { id: "vault", label: "Document vault", icon: "vault", description: "Encrypted ID & proof of residence storage." },
+    { id: "work", label: "Work info", icon: "work", description: "Employer details & income records." },
+    { id: "activity", label: "Activity history", icon: "activity", description: "Audit trail of sign-ins & IP logs." },
+    { id: "actioncentre", label: "Action centre", icon: "actioncentre", description: "Pending tasks & document renewals." },
+    { id: "preferences", label: "Preferences", icon: "preferences", description: "Language, alerts & notification channels." },
 ];
-
-function FlipTile({ tile }) {
-    const [isFlipped, setIsFlipped] = useState(false);
-
-    return (
-        // FIX: Moved the dynamic class logic to the outer .tile wrapper so the CSS matches!
-        <div className={`tile${isFlipped ? " is-flipped" : ""}`}>
-            <div
-                className="tile-inner"
-                onClick={() => setIsFlipped(!isFlipped)}
-                role="button"
-                tabIndex={0}
-                aria-pressed={isFlipped}
-                aria-label={tile.label}
-                onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                        e.preventDefault();
-                        setIsFlipped(!isFlipped);
-                    }
-                }}
-            >
-                <div className="tile-face tile-front">
-                    {TILE_ICONS[tile.icon]}
-                    <span className="tile-front-label">{tile.label}</span>
-                </div>
-                <div className="tile-face tile-back">
-                    <span className="tile-back-title">{tile.label}</span>
-                    <span>{tile.description}</span>
-                </div>
-            </div>
-        </div>
-    );
-}
-
-function TileSection({ title, tiles }) {
-    return (
-        <section>
-            <h2 className="profile-section-title">{title}</h2>
-            <div className="tile-grid">
-                {tiles.map((tile) => <FlipTile tile={tile} key={tile.id} />)}
-            </div>
-        </section>
-    );
-}
 
 export default function ProfileScreen({ onBack }) {
     const { customerName, initials } = useAuth();
+    const [activeModal, setActiveModal] = useState(null);
+
+    // Global settings states
+    const [dailyLimit, setDailyLimit] = useState(15000);
+    const [username, setUsername] = useState("tshegofatso_h");
+    const [privacySettings, setPrivacySettings] = useState({ blurBalances: false, hideInvestments: false });
+
+    const handleTogglePrivacy = (key) => {
+        setPrivacySettings((prev) => ({ ...prev, [key]: !prev[key] }));
+    };
 
     return (
         <main className="dashboard">
             <div className="panel">
+                {/* Header Section */}
                 <div className="profile-header">
                     <button className="back-btn" onClick={onBack} aria-label="Back to dashboard">
                         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -112,9 +87,95 @@ export default function ProfileScreen({ onBack }) {
                     <div className="welcome-line" style={{ fontSize: "1.2rem" }}>{customerName}</div>
                 </div>
 
-                <TileSection title="Settings" tiles={SETTINGS_TILES} />
-                <TileSection title="My profile" tiles={PROFILE_TILES} />
+                {/* Settings Grid */}
+                <section>
+                    <h2 className="profile-section-title">Settings</h2>
+                    <div className="tile-grid">
+                        {SETTINGS_TILES.map((tile) => (
+                            <FlipTile tile={tile} key={tile.id} onClickModal={() => setActiveModal(tile.id)} />
+                        ))}
+                    </div>
+                </section>
+
+                {/* Profile Grid */}
+                <section>
+                    <h2 className="profile-section-title">My Profile</h2>
+                    <div className="tile-grid">
+                        {PROFILE_TILES.map((tile) => (
+                            <FlipTile tile={tile} key={tile.id} onClickModal={() => setActiveModal(tile.id)} />
+                        ))}
+                    </div>
+                </section>
             </div>
+
+            {/* ================= MODAL RENDERERS ================= */}
+            {activeModal === "username" && (
+                <UsernamePinModal
+                    currentUsername={username}
+                    onClose={() => setActiveModal(null)}
+                    onSave={({ username: newU }) => setUsername(newU)}
+                />
+            )}
+
+            {activeModal === "limit" && (
+                <DailyLimitModal
+                    currentLimit={dailyLimit}
+                    onClose={() => setActiveModal(null)}
+                    onUpdateLimit={(limit) => setDailyLimit(limit)}
+                />
+            )}
+
+            {activeModal === "privacy" && (
+                <PrivacyModeModal
+                    privacySettings={privacySettings}
+                    onClose={() => setActiveModal(null)}
+                    onToggleSetting={handleTogglePrivacy}
+                />
+            )}
+
+            {activeModal === "duress" && (
+                <DuressModeModal onClose={() => setActiveModal(null)} />
+            )}
+
+            {activeModal === "channels" && (
+                <ChannelsDevicesModal onClose={() => setActiveModal(null)} />
+            )}
+
+            {activeModal === "permissions" && (
+                <DataPermissionsModal onClose={() => setActiveModal(null)} />
+            )}
+
+            {activeModal === "biometrics" && (
+                <BiometricsModal onClose={() => setActiveModal(null)} />
+            )}
         </main>
+    );
+}
+
+// Reusable FlipTile
+function FlipTile({ tile, onClickModal }) {
+    const [isFlipped, setIsFlipped] = useState(false);
+
+    return (
+        <div className={`tile${isFlipped ? " is-flipped" : ""}`}>
+            <div
+                className="tile-inner"
+                onClick={() => setIsFlipped(!isFlipped)}
+                role="button"
+                tabIndex={0}
+            >
+                <div className="tile-face tile-front">
+                    {TILE_ICONS[tile.icon]}
+                    <span className="tile-front-label">{tile.label}</span>
+                </div>
+                <div className="tile-face tile-back" onClick={(e) => { e.stopPropagation(); onClickModal(); }}>
+                    <span className="tile-back-title">{tile.label}</span>
+                    <span style={{ fontSize: "0.68rem" }}>{tile.description}</span>
+                    <button className="action-pill" style={{ marginTop: "4px", fontSize: "0.65rem", padding: "0.2rem 0.5rem" }}>
+                        Manage ❯
+                    </button>
+                </div>
+            </div>
+        </div>
     );
 }

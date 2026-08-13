@@ -5,11 +5,17 @@ import FoxMark from "./FoxMark.jsx";
 import TabNav from "./TabNav.jsx";
 import TransferModal from "./TransferModal.jsx";
 import ProfileScreen from "./ProfileScreen.jsx";
-import {
-    AccountsPanel, NetWorthPanel, InsightsPanel,
-    GoalsPanel, CardsPanel, FamilyPanel,
-    CarbonPanel, CoachPanel
-} from "./DashboardPanels.jsx";
+
+// Modular Panel Imports from src/components/dashboard/
+import { AccountsPanel } from "./dashboard/AccountsPanel.jsx";
+import { CardsPanel } from "./dashboard/CardsPanel.jsx";
+import { ActivityPanel } from "./dashboard/ActivityPanel.jsx";
+import { NetWorthPanel } from "./dashboard/NetWorthPanel.jsx";
+import { InsightsPanel } from "./dashboard/InsightsPanel.jsx";
+import { GoalsPanel } from "./dashboard/GoalsPanel.jsx";
+import { FamilyPanel } from "./dashboard/FamilyPanel.jsx";
+import { CarbonPanel } from "./dashboard/CarbonPanel.jsx";
+import { CoachPanel } from "./dashboard/CoachPanel.jsx";
 
 export default function Dashboard() {
     const { customerName, initials, signOut } = useAuth();
@@ -20,10 +26,17 @@ export default function Dashboard() {
     const [transactions, setTransactions] = useState(TRANSACTIONS);
     const [isTransferOpen, setIsTransferOpen] = useState(false);
 
+    // Dynamically updates account balances and pushes a new transaction entry
     const handleTransfer = ({ fromId, toId, amount }) => {
         setAccounts((prev) => prev.map((a) => {
-            if (a.id === fromId) return { ...a, balance: a.balance - amount };
-            if (a.id === toId) return { ...a, balance: a.balance + amount };
+            if (a.id === fromId) {
+                const newBalance = a.balance - amount;
+                return { ...a, balance: newBalance, history: [...(a.history || []), newBalance] };
+            }
+            if (a.id === toId) {
+                const newBalance = a.balance + amount;
+                return { ...a, balance: newBalance, history: [...(a.history || []), newBalance] };
+            }
             return a;
         }));
 
@@ -40,13 +53,16 @@ export default function Dashboard() {
         setTransactions((prev) => [newTx, ...prev]);
     };
 
+    // Toggles card freeze state across global app state
     const handleToggleFreeze = (id) => {
-        setAccounts((prev) => prev.map((a) => a.id === id ? { ...a, frozen: !a.frozen } : a));
+        setAccounts((prev) => prev.map((a) => a.id === id ? { ...a, frozen: !a.frozen, isFrozen: !a.frozen } : a));
     };
 
+    // Renders the active panel based on selected tab
     const renderPanel = () => {
         switch(activeTab) {
-            case "accounts": return <AccountsPanel accounts={accounts} transactions={transactions} onOpenTransfer={() => setIsTransferOpen(true)} />;
+            case "accounts": return <AccountsPanel accounts={accounts} onOpenTransfer={() => setIsTransferOpen(true)} />;
+            case "activity": return <ActivityPanel transactions={transactions} />;
             case "networth": return <NetWorthPanel accounts={accounts} />;
             case "insights": return <InsightsPanel />;
             case "goals": return <GoalsPanel />;

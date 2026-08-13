@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import FoxMark from "./FoxMark.jsx";
-import { DEMO_CUSTOMER } from "../data/mockData.js";
 import { useAuth } from "../context/AuthContext.jsx";
 
-export default function LoginScreen() {
+export default function LoginScreen({ onOpenRegister }) {
     const { signIn } = useAuth();
     const [passcode, setPasscode] = useState("");
     const [error, setError] = useState("");
@@ -12,11 +11,13 @@ export default function LoginScreen() {
 
     const handlePasscodeSubmit = (event) => {
         event.preventDefault();
-        if (passcode === DEMO_CUSTOMER.passcode) {
-            setError("");
-            signIn();
+
+        const result = signIn(passcode);
+
+        if (!result.success) {
+            setError(result.error);
         } else {
-            setError("Passcode incorrect. Try 1234 for this demo.");
+            setError("");
         }
     };
 
@@ -28,11 +29,10 @@ export default function LoginScreen() {
 
         scanTimer.current = setTimeout(() => {
             setMarkState("verified");
-            setTimeout(() => signIn(), 350);
+            setTimeout(() => signIn("1234"), 350); // Default Face ID logs in under standard profile
         }, 1100);
     };
 
-    // Cleanup timer if component unmounts
     useEffect(() => {
         return () => {
             if (scanTimer.current) clearTimeout(scanTimer.current);
@@ -59,13 +59,15 @@ export default function LoginScreen() {
                         inputMode="numeric"
                         value={passcode}
                         onChange={(e) => setPasscode(e.target.value)}
-                        placeholder="1234"
+                        placeholder="1234 or 9999"
                         autoComplete="off"
                     />
                     {error && <div className="login-error">{error}</div>}
+
                     <button type="submit" className="btn-primary">
                         Sign in
                     </button>
+
                     <button
                         type="button"
                         className="btn-ghost"
@@ -74,6 +76,21 @@ export default function LoginScreen() {
                     >
                         Use face scan
                     </button>
+
+                    {/* REGISTER LINK BUTTON */}
+                    <div style={{ textAlign: "center", marginTop: "0.5rem" }}>
+                        <span className="field-label" style={{ marginRight: "6px" }}>
+                            New to Emeritus Prime?
+                        </span>
+                        <button
+                            type="button"
+                            className="logout-link"
+                            onClick={onOpenRegister}
+                            style={{ color: "var(--amber)", textTransform: "none", fontWeight: "600" }}
+                        >
+                            Create an Account
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

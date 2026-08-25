@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 
-// Import modular settings modals from profile/settings/
+// --- Settings Modals (profile/settings/) ---
 import UsernamePinModal from "./profile/settings/UsernamePinModal.jsx";
 import DailyLimitModal from "./profile/settings/DailyLimitModal.jsx";
 import PrivacyModeModal from "./profile/settings/PrivacyModeModal.jsx";
@@ -10,10 +10,29 @@ import ChannelsDevicesModal from "./profile/settings/ChannelsDevicesModal.jsx";
 import DataPermissionsModal from "./profile/settings/DataPermissionsModal.jsx";
 import BiometricsModal from "./profile/settings/BiometricsModal.jsx";
 
-// Icon Component
+// --- Profile Info Modals (profile/info/) ---
+import PersonalInfoModal from "./profile/info/PersonalInfoModal.jsx";
+import FamilyModal from "./profile/info/FamilyModal.jsx";
+import RegulatoryModal from "./profile/info/RegulatoryModal.jsx";
+import DocumentVaultModal from "./profile/info/DocumentVaultModal.jsx";
+import WorkInfoModal from "./profile/info/WorkInfoModal.jsx";
+import ActivityHistoryModal from "./profile/info/ActivityHistoryModal.jsx";
+import ActionCentreModal from "./profile/info/ActionCentreModal.jsx";
+import PreferenceModal from "./profile/info/PreferenceModal.jsx";
+
+// Shared SVG Icon Component
 function Icon({ d, className = "tile-icon" }) {
     return (
-        <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <svg
+            className={className}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+        >
             {d}
         </svg>
     );
@@ -73,10 +92,12 @@ export default function ProfileScreen({ onBack }) {
         setPrivacySettings((prev) => ({ ...prev, [key]: !prev[key] }));
     };
 
+    const handleCloseModal = () => setActiveModal(null);
+
     return (
         <main className="dashboard">
             <div className="panel">
-                {/* Header Section */}
+                {/* Top Header */}
                 <div className="profile-header">
                     <button className="back-btn" onClick={onBack} aria-label="Back to dashboard">
                         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -108,11 +129,11 @@ export default function ProfileScreen({ onBack }) {
                 </section>
             </div>
 
-            {/* ================= MODAL RENDERERS ================= */}
+            {/* ================= SETTINGS MODALS ================= */}
             {activeModal === "username" && (
                 <UsernamePinModal
                     currentUsername={username}
-                    onClose={() => setActiveModal(null)}
+                    onClose={handleCloseModal}
                     onSave={({ username: newU }) => setUsername(newU)}
                 />
             )}
@@ -120,39 +141,76 @@ export default function ProfileScreen({ onBack }) {
             {activeModal === "limit" && (
                 <DailyLimitModal
                     currentLimit={dailyLimit}
-                    onClose={() => setActiveModal(null)}
+                    onClose={handleCloseModal}
                     onUpdateLimit={(limit) => setDailyLimit(limit)}
                 />
+            )}
+
+            {activeModal === "biometrics" && (
+                <BiometricsModal onClose={handleCloseModal} />
+            )}
+
+            {activeModal === "mandates" && (
+                <DataPermissionsModal onClose={handleCloseModal} />
             )}
 
             {activeModal === "privacy" && (
                 <PrivacyModeModal
                     privacySettings={privacySettings}
-                    onClose={() => setActiveModal(null)}
+                    onClose={handleCloseModal}
                     onToggleSetting={handleTogglePrivacy}
                 />
             )}
 
-            {activeModal === "duress" && (
-                <DuressModeModal onClose={() => setActiveModal(null)} />
+            {activeModal === "permissions" && (
+                <DataPermissionsModal onClose={handleCloseModal} />
             )}
 
             {activeModal === "channels" && (
-                <ChannelsDevicesModal onClose={() => setActiveModal(null)} />
+                <ChannelsDevicesModal onClose={handleCloseModal} />
             )}
 
-            {activeModal === "permissions" && (
-                <DataPermissionsModal onClose={() => setActiveModal(null)} />
+            {activeModal === "duress" && (
+                <DuressModeModal onClose={handleCloseModal} />
             )}
 
-            {activeModal === "biometrics" && (
-                <BiometricsModal onClose={() => setActiveModal(null)} />
+            {/* ================= PROFILE INFO MODALS ================= */}
+            {activeModal === "personal" && (
+                <PersonalInfoModal onClose={handleCloseModal} />
+            )}
+
+            {activeModal === "family" && (
+                <FamilyModal onClose={handleCloseModal} />
+            )}
+
+            {activeModal === "regulatory" && (
+                <RegulatoryModal onClose={handleCloseModal} />
+            )}
+
+            {activeModal === "vault" && (
+                <DocumentVaultModal onClose={handleCloseModal} />
+            )}
+
+            {activeModal === "work" && (
+                <WorkInfoModal onClose={handleCloseModal} />
+            )}
+
+            {activeModal === "activity" && (
+                <ActivityHistoryModal onClose={handleCloseModal} />
+            )}
+
+            {activeModal === "actioncentre" && (
+                <ActionCentreModal onClose={handleCloseModal} />
+            )}
+
+            {activeModal === "preferences" && (
+                <PreferenceModal onClose={handleCloseModal} />
             )}
         </main>
     );
 }
 
-// Reusable FlipTile
+// Reusable 3D FlipTile Component
 function FlipTile({ tile, onClickModal }) {
     const [isFlipped, setIsFlipped] = useState(false);
 
@@ -168,10 +226,20 @@ function FlipTile({ tile, onClickModal }) {
                     {TILE_ICONS[tile.icon]}
                     <span className="tile-front-label">{tile.label}</span>
                 </div>
-                <div className="tile-face tile-back" onClick={(e) => { e.stopPropagation(); onClickModal(); }}>
+                <div
+                    className="tile-face tile-back"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onClickModal();
+                    }}
+                >
                     <span className="tile-back-title">{tile.label}</span>
                     <span style={{ fontSize: "0.68rem" }}>{tile.description}</span>
-                    <button className="action-pill" style={{ marginTop: "4px", fontSize: "0.65rem", padding: "0.2rem 0.5rem" }}>
+                    <button
+                        type="button"
+                        className="action-pill"
+                        style={{ marginTop: "4px", fontSize: "0.65rem", padding: "0.2rem 0.5rem" }}
+                    >
                         Manage ❯
                     </button>
                 </div>

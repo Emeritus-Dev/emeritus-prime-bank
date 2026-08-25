@@ -6,16 +6,18 @@ import TabNav from "./TabNav.jsx";
 import TransferModal from "./TransferModal.jsx";
 import ProfileScreen from "./ProfileScreen.jsx";
 
-// Modular Panel Imports from src/components/dashboard/
-import { AccountsPanel } from "./dashboard/AccountsPanel.jsx";
-import { CardsPanel } from "./dashboard/CardsPanel.jsx";
-import { ActivityPanel } from "./dashboard/ActivityPanel.jsx";
-import { NetWorthPanel } from "./dashboard/NetWorthPanel.jsx";
-import { InsightsPanel } from "./dashboard/InsightsPanel.jsx";
-import { GoalsPanel } from "./dashboard/GoalsPanel.jsx";
-import { FamilyPanel } from "./dashboard/FamilyPanel.jsx";
-import { CarbonPanel } from "./dashboard/CarbonPanel.jsx";
-import { CoachPanel } from "./dashboard/CoachPanel.jsx";
+// Clean Single Barrel Import for all 9 Panels
+import {
+    AccountsPanel,
+    CardsPanel,
+    ActivityPanel,
+    NetWorthPanel,
+    InsightsPanel,
+    GoalsPanel,
+    FamilyPanel,
+    CarbonPanel,
+    CoachPanel,
+} from "./dashboard";
 
 export default function Dashboard() {
     const { customerName, initials, signOut } = useAuth();
@@ -26,19 +28,21 @@ export default function Dashboard() {
     const [transactions, setTransactions] = useState(TRANSACTIONS);
     const [isTransferOpen, setIsTransferOpen] = useState(false);
 
-    // Dynamically updates account balances and pushes a new transaction entry
+    // Dynamically updates balances and logs new transaction entry
     const handleTransfer = ({ fromId, toId, amount }) => {
-        setAccounts((prev) => prev.map((a) => {
-            if (a.id === fromId) {
-                const newBalance = a.balance - amount;
-                return { ...a, balance: newBalance, history: [...(a.history || []), newBalance] };
-            }
-            if (a.id === toId) {
-                const newBalance = a.balance + amount;
-                return { ...a, balance: newBalance, history: [...(a.history || []), newBalance] };
-            }
-            return a;
-        }));
+        setAccounts((prev) =>
+            prev.map((a) => {
+                if (a.id === fromId) {
+                    const newBalance = a.balance - amount;
+                    return { ...a, balance: newBalance, history: [...(a.history || []), newBalance] };
+                }
+                if (a.id === toId) {
+                    const newBalance = a.balance + amount;
+                    return { ...a, balance: newBalance, history: [...(a.history || []), newBalance] };
+                }
+                return a;
+            })
+        );
 
         const fromName = accounts.find((a) => a.id === fromId)?.name || "account";
         const toName = accounts.find((a) => a.id === toId)?.name || "account";
@@ -47,7 +51,7 @@ export default function Dashboard() {
             id: `tx-${Date.now()}`,
             name: `Transfer: ${fromName} → ${toName}`,
             date: "Just now",
-            amount: -amount
+            amount: -amount,
         };
 
         setTransactions((prev) => [newTx, ...prev]);
@@ -55,22 +59,36 @@ export default function Dashboard() {
 
     // Toggles card freeze state across global app state
     const handleToggleFreeze = (id) => {
-        setAccounts((prev) => prev.map((a) => a.id === id ? { ...a, frozen: !a.frozen, isFrozen: !a.frozen } : a));
+        setAccounts((prev) =>
+            prev.map((a) =>
+                a.id === id ? { ...a, frozen: !a.frozen, isFrozen: !a.frozen } : a
+            )
+        );
     };
 
-    // Renders the active panel based on selected tab
+    // Renders active panel view based on selected tab
     const renderPanel = () => {
-        switch(activeTab) {
-            case "accounts": return <AccountsPanel accounts={accounts} onOpenTransfer={() => setIsTransferOpen(true)} />;
-            case "activity": return <ActivityPanel transactions={transactions} />;
-            case "networth": return <NetWorthPanel accounts={accounts} />;
-            case "insights": return <InsightsPanel />;
-            case "goals": return <GoalsPanel />;
-            case "cards": return <CardsPanel accounts={accounts} onToggleFreeze={handleToggleFreeze} />;
-            case "family": return <FamilyPanel />;
-            case "carbon": return <CarbonPanel />;
-            case "coach": return <CoachPanel />;
-            default: return null;
+        switch (activeTab) {
+            case "accounts":
+                return <AccountsPanel accounts={accounts} onOpenTransfer={() => setIsTransferOpen(true)} />;
+            case "activity":
+                return <ActivityPanel transactions={transactions} />;
+            case "networth":
+                return <NetWorthPanel accounts={accounts} />;
+            case "insights":
+                return <InsightsPanel />;
+            case "goals":
+                return <GoalsPanel />;
+            case "cards":
+                return <CardsPanel accounts={accounts} onToggleFreeze={handleToggleFreeze} />;
+            case "family":
+                return <FamilyPanel />;
+            case "carbon":
+                return <CarbonPanel />;
+            case "coach":
+                return <CoachPanel accounts={accounts} />;
+            default:
+                return null;
         }
     };
 
@@ -86,7 +104,9 @@ export default function Dashboard() {
                         <div className="avatar size-sm">{initials}</div>
                         <span className="profile-trigger-name">{customerName}</span>
                     </button>
-                    <button className="logout-link" onClick={signOut}>Sign out</button>
+                    <button className="logout-link" onClick={signOut}>
+                        Sign out
+                    </button>
                 </div>
             </header>
 

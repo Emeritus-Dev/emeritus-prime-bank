@@ -1,15 +1,15 @@
 import React, { useState } from "react";
+import TransactionList from "../TransactionList.jsx";
 
 export function ActivityPanel({ transactions = [] }) {
     const [selectedTx, setSelectedTx] = useState(null);
     const [filter, setFilter] = useState("all");
     const [disputedTxs, setDisputedTxs] = useState({});
 
-    // Sample fallback data with enriched receipt details if standard transactions are passed
     const enrichedTransactions = transactions.map((tx) => ({
         ...tx,
-        merchant: tx.name || "Merchant Purchase",
-        category: tx.category || "Lifestyle & Retail",
+        merchant: tx.merchant || tx.name || "Merchant Purchase",
+        category: tx.category || "General Expenditure",
         location: tx.location || "Cape Town, WC",
         tag: tx.tag || "Personal",
         items: tx.items || [
@@ -19,9 +19,13 @@ export function ActivityPanel({ transactions = [] }) {
         reference: tx.id || `TXN-${Math.floor(100000 + Math.random() * 900000)}`
     }));
 
+    const filteredTransactions = enrichedTransactions.filter(
+        (tx) => filter === "all" || tx.tag === filter
+    );
+
     const handleDispute = (txId) => {
         setDisputedTxs((prev) => ({ ...prev, [txId]: true }));
-        alert(`Dispute lodge created for Ref: ${txId}. Investigation case opened with fraud team.`);
+        alert(`Dispute lodged for Ref: ${txId}. Case routed to Emeritus Fraud Desk.`);
         setSelectedTx(null);
     };
 
@@ -33,13 +37,12 @@ export function ActivityPanel({ transactions = [] }) {
                     <p className="section-sub">Enriched real-time transaction ledger with itemized digital receipt inspection.</p>
                 </div>
 
-                {/* Category Filters */}
                 <div style={{ display: "flex", gap: "0.4rem" }}>
                     {["all", "Personal", "Tax Deductible", "Business"].map((cat) => (
                         <button
                             key={cat}
                             type="button"
-                            className={`action-pill${filter === cat ? " active" : ""}`}
+                            className={`action-pill${filter === cat ? " is-active" : ""}`}
                             onClick={() => setFilter(cat)}
                             style={{ fontSize: "0.72rem", padding: "0.35rem 0.7rem" }}
                         >
@@ -49,58 +52,14 @@ export function ActivityPanel({ transactions = [] }) {
                 </div>
             </div>
 
-            {/* TRANSACTIONS FEED */}
-            <div className="transactions-list" style={{ marginTop: "1rem" }}>
-                {enrichedTransactions
-                    .filter((tx) => filter === "all" || tx.tag === filter)
-                    .map((tx) => {
-                        const isDisputed = !!disputedTxs[tx.id];
-
-                        return (
-                            <div
-                                key={tx.id}
-                                className="transaction-row"
-                                onClick={() => setSelectedTx(tx)}
-                                style={{
-                                    cursor: "pointer",
-                                    padding: "0.9rem 1rem",
-                                    borderRadius: "10px",
-                                    transition: "background 0.2s ease"
-                                }}
-                            >
-                                <div style={{ display: "flex", alignItems: "center", gap: "0.9rem" }}>
-                                    <div className="avatar size-sm" style={{ background: "var(--surface-raised)", border: "1px solid var(--hairline)", fontSize: "0.75rem", color: "var(--gold)" }}>
-                                        {tx.merchant.substring(0, 2).toUpperCase()}
-                                    </div>
-                                    <div className="tx-meta">
-                                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                                            <span className="tx-name" style={{ fontWeight: "600" }}>{tx.merchant}</span>
-                                            {isDisputed && (
-                                                <span style={{ fontSize: "0.65rem", background: "rgba(220, 53, 69, 0.2)", color: "var(--rust)", padding: "0.1rem 0.4rem", borderRadius: "4px" }}>
-                                                    Under Dispute
-                                                </span>
-                                            )}
-                                        </div>
-                                        <div className="tx-date" style={{ fontSize: "0.72rem", color: "var(--parchment-dim)" }}>
-                                            {tx.date} • {tx.location}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div style={{ textAlign: "right" }}>
-                                    <div className={`tx-amount ${tx.amount > 0 ? "positive" : "negative"}`} style={{ fontFamily: "var(--mono)", fontWeight: "600" }}>
-                                        {tx.amount > 0 ? "+" : ""}R {Math.abs(tx.amount).toFixed(2)}
-                                    </div>
-                                    <span style={{ fontSize: "0.65rem", color: "var(--amber)", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                                        View Itemized Slip ❯
-                                    </span>
-                                </div>
-                            </div>
-                        );
-                    })}
+            <div style={{ marginTop: "1rem" }}>
+                <TransactionList
+                    transactions={filteredTransactions}
+                    onSelectTransaction={(tx) => setSelectedTx(tx)}
+                    disputedMap={disputedTxs}
+                />
             </div>
 
-            {/* DIGITAL RECEIPT INSPECTION MODAL */}
             {selectedTx && (
                 <div className="modal-backdrop" onClick={() => setSelectedTx(null)}>
                     <div
@@ -120,7 +79,6 @@ export function ActivityPanel({ transactions = [] }) {
                             </div>
                         </div>
 
-                        {/* Itemized Line Breakdown */}
                         <div style={{ display: "flex", flexDirection: "column", gap: "0.6rem", marginBottom: "1.2rem" }}>
                             <div style={{ fontSize: "0.7rem", color: "var(--parchment-dim)", textTransform: "uppercase", letterSpacing: "0.08em" }}>
                                 Line Item Breakdown
@@ -133,7 +91,6 @@ export function ActivityPanel({ transactions = [] }) {
                             ))}
                         </div>
 
-                        {/* Tax & Total Summary */}
                         <div style={{ background: "var(--surface-raised)", padding: "0.9rem", borderRadius: "8px", border: "1px solid var(--hairline)", marginBottom: "1.5rem" }}>
                             <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", color: "var(--parchment-dim)" }}>
                                 <span>15% VAT Included:</span>
@@ -145,7 +102,6 @@ export function ActivityPanel({ transactions = [] }) {
                             </div>
                         </div>
 
-                        {/* Actions */}
                         <div style={{ display: "flex", gap: "0.75rem" }}>
                             <button type="button" className="btn-ghost" onClick={() => setSelectedTx(null)} style={{ flex: 1 }}>
                                 CLOSE

@@ -1,54 +1,142 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-interface UserAccount {
+export interface Account {
     id: string;
     name: string;
-    number: string;
+    accountNumber: string;
     balance: number;
-    frozen: boolean;
+    currency: string;
+    isCredit?: boolean;
+    creditLimit?: number;
+    isFrozen?: boolean;
+}
+
+export interface Transaction {
+    id: string;
+    title: string;
+    category: string;
+    date: string;
+    amount: number;
+    isPositive: boolean;
 }
 
 interface AuthContextType {
     isAuthenticated: boolean;
     isDuress: boolean;
-    user: { name: string; initials: string } | null;
-    accounts: UserAccount[];
-    signIn: (passcode: string) => boolean;
-    signOut: () => void;
+    customerName: string;
+    initials: string;
+    accounts: Account[];
+    transactions: Transaction[];
+    loginWithPin: (pin: string) => boolean;
+    authenticateWithBiometrics: () => Promise<boolean>;
+    logout: () => void;
+    toggleCardFreeze: (accountId: string) => void;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null);
-
-const DEFAULT_ACCOUNTS: UserAccount[] = [
-    { id: "acc-1", name: "Prime Cheque", number: "•••• 4471", balance: 4218.62, frozen: false },
-    { id: "acc-2", name: "Vault Savings", number: "•••• 9903", balance: 18230.00, frozen: false },
+const PRIMARY_ACCOUNTS: Account[] = [
+    {
+        id: 'acc-1',
+        name: 'Sovereign Treasury',
+        accountNumber: '••• 8842',
+        balance: 482950.0,
+        currency: 'ZAR',
+        isFrozen: false,
+    },
+    {
+        id: 'acc-2',
+        name: 'Tactical Reserve Liquidity',
+        accountNumber: '••• 3109',
+        balance: 125400.0,
+        currency: 'ZAR',
+        isFrozen: false,
+    },
+    {
+        id: 'acc-3',
+        name: 'Sovereign Black Card',
+        accountNumber: '••• 9921',
+        balance: -18500.0,
+        creditLimit: 250000.0,
+        currency: 'ZAR',
+        isCredit: true,
+        isFrozen: false,
+    },
 ];
 
-const DECOY_ACCOUNTS: UserAccount[] = [
-    { id: "decoy-1", name: "Standard Cheque", number: "•••• 1092", balance: 1450.00, frozen: false },
+const DECOY_ACCOUNTS: Account[] = [
+    {
+        id: 'acc-decoy-1',
+        name: 'Everyday Current Account',
+        accountNumber: '••• 1044',
+        balance: 1420.5,
+        currency: 'ZAR',
+        isFrozen: false,
+    },
+    {
+        id: 'acc-decoy-2',
+        name: 'Pocket Savings',
+        accountNumber: '••• 5590',
+        balance: 350.0,
+        currency: 'ZAR',
+        isFrozen: false,
+    },
 ];
+
+const PRIMARY_TRANSACTIONS: Transaction[] = [
+    { id: 'tx-1', title: 'Bullion Vault Allocation', category: 'Asset Transfer', date: 'Today, 08:30', amount: -45000, isPositive: false },
+    { id: 'tx-2', title: 'Offshore Dividend Inflow', category: 'Yield Distribution', date: 'Yesterday, 14:15', amount: 128500, isPositive: true },
+    { id: 'tx-3', title: 'Private Aviation Charter', category: 'Executive Logistics', date: '24 Aug, 11:00', amount: -32000, isPositive: false },
+];
+
+const DECOY_TRANSACTIONS: Transaction[] = [
+    { id: 'tx-d1', title: 'Corner Grocer Store', category: 'Groceries', date: 'Today, 09:12', amount: -245.5, isPositive: false },
+    { id: 'tx-d2', title: 'Fuel Station Express', category: 'Transport', date: 'Yesterday, 17:40', amount: -400.0, isPositive: false },
+];
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isDuress, setIsDuress] = useState(false);
+    const [accounts, setAccounts] = useState<Account[]>(PRIMARY_ACCOUNTS);
+    const [transactions, setTransactions] = useState<Transaction[]>(PRIMARY_TRANSACTIONS);
 
-    const signIn = (passcode: string) => {
-        if (passcode === "9999") {
-            setIsDuress(true);
+    const loginWithPin = (pin: string): boolean => {
+        if (pin === '1234') {
+            setIsDuress(false);
+            setAccounts(PRIMARY_ACCOUNTS);
+            setTransactions(PRIMARY_TRANSACTIONS);
             setIsAuthenticated(true);
             return true;
         }
-        if (passcode === "1234") {
-            setIsDuress(false);
+        if (pin === '9999') {
+            setIsDuress(true);
+            setAccounts(DECOY_ACCOUNTS);
+            setTransactions(DECOY_TRANSACTIONS);
             setIsAuthenticated(true);
             return true;
         }
         return false;
     };
 
-    const signOut = () => {
+    const authenticateWithBiometrics = async (): Promise<boolean> => {
+        setIsDuress(false);
+        setAccounts(PRIMARY_ACCOUNTS);
+        setTransactions(PRIMARY_TRANSACTIONS);
+        setIsAuthenticated(true);
+        return true;
+    };
+
+    const logout = () => {
         setIsAuthenticated(false);
         setIsDuress(false);
+    };
+
+    const toggleCardFreeze = (accountId: string) => {
+        setAccounts((prev) =>
+            prev.map((acc) =>
+                acc.id === accountId ? { ...acc, isFrozen: !acc.isFrozen } : acc
+            )
+        );
     };
 
     return (
@@ -56,10 +144,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             value={{
                 isAuthenticated,
                 isDuress,
-                user: { name: "Tshegofatso Hlabela", initials: "TH" },
-                accounts: isDuress ? DECOY_ACCOUNTS : DEFAULT_ACCOUNTS,
-                signIn,
-                signOut,
+                customerName: isDuress ? 'John Doe' : 'Tshegofatso Hlabela',
+                initials: isDuress ? 'JD' : 'TH',
+                accounts,
+                transactions,
+                loginWithPin,
+                authenticateWithBiometrics,
+                logout,
+                toggleCardFreeze,
             }}
         >
             {children}
@@ -67,8 +159,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
 }
 
-export function useMobileAuth() {
-    const ctx = useContext(AuthContext);
-    if (!ctx) throw new Error("useMobileAuth must be used within an AuthProvider");
-    return ctx;
+export function useAuth(): AuthContextType {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
 }

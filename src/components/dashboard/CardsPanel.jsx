@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import CreditCard from "../CreditCard.jsx";
+import VirtualCardManager from "../VirtualCardManager.jsx";
 
 export function CardsPanel({ accounts = [], onToggleFreeze }) {
     const [showNumbersMap, setShowNumbersMap] = useState({});
@@ -15,6 +16,7 @@ export function CardsPanel({ accounts = [], onToggleFreeze }) {
                 <p className="section-sub">Tap any credit card to flip 180° and reveal the security CVV and signature strip.</p>
             </div>
 
+            {/* 3D PHYSICAL CARDS SECTION */}
             <div style={{ display: "flex", flexDirection: "column", gap: "2rem", marginTop: "0.5rem" }}>
                 {accounts.length > 0 ? (
                     accounts.map((acc) => {
@@ -86,6 +88,11 @@ export function CardsPanel({ accounts = [], onToggleFreeze }) {
                 ) : (
                     <div className="empty-state">No card facilities available.</div>
                 )}
+            </div>
+
+            {/* VIRTUAL CARDS / EPHEMERAL SHIELDS */}
+            <div style={{ marginTop: "2rem", borderTop: "1px dashed var(--hairline)", paddingTop: "1.5rem" }}>
+                <VirtualCardManager />
             </div>
         </div>
     );

@@ -1,193 +1,71 @@
-
-.credit-card-wrapper {
-    width: 330px;
-    height: 195px;
+.card-3d-wrapper {
     perspective: 1000px;
+    width: 100%;
+    max-width: 340px;
+    height: 200px;
     cursor: pointer;
-    user-select: none;
-    margin: 0 auto;
 }
 
-
-.credit-card-inner {
+.card-3d-inner {
     position: relative;
     width: 100%;
     height: 100%;
-    border-radius: 16px;
-    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: left;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     transform-style: preserve-3d;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.55);
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
 }
 
-.credit-card-wrapper.is-flipped .credit-card-inner {
+.card-3d-inner.is-flipped {
     transform: rotateY(180deg);
 }
 
-
-.card-face-surface {
+.card-face {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    border-radius: 16px;
-    padding: 1.25rem;
-    backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    border: 1px solid rgba(232, 226, 209, 0.15);
-    background: radial-gradient(ellipse 80% 80% at 50% -20%, rgba(201, 162, 39, 0.15), transparent 80%), #121821;
-    color: #ede6d6;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    padding: 1.25rem 1.4rem;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justifyContent: space-between;
+    border: 1px solid var(--hairline-gold);
+    background: linear-gradient(135deg, #182030 0%, #121821 60%, #0b0f14 100%);
     overflow: hidden;
 }
 
-
-.credit-card-wrapper.is-frozen .card-face-surface {
-    filter: grayscale(0.85) opacity(0.75);
-}
-
-
-.card-brand-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 2;
-}
-
-.card-emblem-img {
-    width: 38px;
-    height: 38px;
-    object-fit: contain;
-    border-radius: 50%;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
-}
-
-.card-bank-title {
-    font-family: "Fraunces", "Iowan Old Style", serif;
-    font-size: 0.85rem;
-    letter-spacing: 0.05em;
-    color: #c9a227;
-}
-
-.card-chip-row {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    z-index: 2;
-    margin-top: 4px;
-}
-
-.emv-chip-gold {
-    width: 40px;
-    height: 28px;
-    border-radius: 5px;
-    background: linear-gradient(135deg, #ffd700 0%, #b8860b 100%);
-    border: 1px solid rgba(0, 0, 0, 0.35);
-    position: relative;
-    overflow: hidden;
-    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.4);
-}
-
-.emv-chip-line {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: rgba(0, 0, 0, 0.3);
-}
-
-.contactless-waves-icon {
-    width: 22px;
-    height: 22px;
-    color: rgba(237, 230, 214, 0.65);
-}
-
-.card-pan-number {
-    font-family: "IBM Plex Mono", monospace;
-    font-size: 1.1rem;
-    letter-spacing: 0.18em;
-    z-index: 2;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
-}
-
-.card-footer-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    z-index: 2;
-}
-
-.card-meta-label {
-    font-size: 0.62rem;
-    color: rgba(237, 230, 214, 0.6);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-}
-
-.card-meta-value {
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-}
-
-/* 5. Back of Card */
-.card-back-surface {
+.card-face-back {
     transform: rotateY(180deg);
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    padding: 1.25rem 0;
 }
 
-.card-magnetic-black-bar {
+.card-chip {
+    width: 38px;
+    height: 28px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, #e8b649 0%, #c9a227 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.mag-stripe {
     width: 100%;
-    height: 42px;
+    height: 38px;
     background: #000000;
-    margin-top: 18px;
+    margin-top: 0.5rem;
 }
 
-.card-signature-box {
-    padding: 0 1.25rem;
-}
-
-.card-signature-strip {
-    display: flex;
-    align-items: center;
-    height: 34px;
-    background: #e0e0e0;
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.card-signature-watermark {
-    flex: 1;
-    padding-left: 10px;
-    font-family: serif;
-    font-size: 0.68rem;
-    font-style: italic;
-    color: #666666;
-}
-
-.card-cvv-display {
-    width: 48px;
-    height: 100%;
+.cvv-strip {
+    margin: 0.8rem 1.4rem 0 1.4rem;
     background: #ffffff;
-    color: #000000;
-    font-family: "IBM Plex Mono", monospace;
+    color: #0b0f14;
+    padding: 0.35rem 0.6rem;
+    text-align: right;
+    font-family: var(--mono);
     font-size: 0.85rem;
     font-weight: 700;
-    display: grid;
-    place-items: center;
-    border-left: 1px solid #ccc;
-}
-
-.card-disclaimer-text {
-    padding: 0 1.25rem 1.25rem;
-    font-size: 0.62rem;
-    color: rgba(237, 230, 214, 0.6);
-    text-align: center;
-    line-height: 1.35;
+    border-radius: 4px;
 }

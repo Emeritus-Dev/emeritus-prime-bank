@@ -1,81 +1,88 @@
-import React, { useState } from "react";
-import logoImg from "../assets/logo.png";
-import "./CreditCard.css";
+import React, { useState } from 'react';
+import './CreditCard.css';
 
 export default function CreditCard({
-                                       accountName = "Premier Cheque",
-                                       accountNumber = "4209 5467 8900 0210",
-                                       holderName = "TSHEGOFATSO HLABELA",
-                                       expiry = "08/28",
-                                       cvv = "963",
+                                       accountName = 'Sovereign Black Card',
+                                       accountNumber = '4209 5467 8900 0210',
+                                       holderName = 'TSHEGOFATSO HLABELA',
+                                       expiry = '08/28',
+                                       cvv = '963',
                                        isFrozen = false,
-                                       showFullNumber = false
+                                       showFullNumber = false,
                                    }) {
     const [isFlipped, setIsFlipped] = useState(false);
 
-    // Format account number into standard 4-digit blocks
-    const formattedPan = showFullNumber
+    const displayPan = showFullNumber
         ? accountNumber
         : `•••• •••• •••• ${accountNumber.slice(-4)}`;
 
     return (
-        <div
-            className={`credit-card-wrapper${isFlipped ? " is-flipped" : ""}${isFrozen ? " is-frozen" : ""}`}
-            onClick={() => setIsFlipped(!isFlipped)}
-        >
-            <div className="credit-card-inner">
-                {/* FRONT OF CARD */}
-                <div className="card-face-surface">
-                    <div className="card-brand-header">
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
-                            <img src={logoImg} alt="Bank Seal" className="card-emblem-img" />
-                            <span className="card-bank-title">Emeritus Prime</span>
-                        </div>
-                        <span style={{ fontSize: "0.68rem", color: "#c9a227", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                            {accountName}
-                        </span>
-                    </div>
-
-                    <div className="card-chip-row">
-                        <div className="emv-chip-gold">
-                            <div className="emv-chip-line" />
-                        </div>
-                        <svg className="contactless-waves-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M8.5 14.5A5 5 0 0 1 12 8a5 5 0 0 1 3.5 6.5" />
-                            <path d="M6 17A8.5 8.5 0 0 1 12 5a8.5 8.5 0 0 1 6 12" />
-                        </svg>
-                    </div>
-
-                    <div className="card-pan-number">{formattedPan}</div>
-
-                    <div className="card-footer-meta">
+        <div className="card-3d-wrapper" onClick={() => setIsFlipped(!isFlipped)}>
+            <div className={`card-3d-inner${isFlipped ? ' is-flipped' : ''}`}>
+                {/* FRONT FACE */}
+                <div className="card-face">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <div>
-                            <div className="card-meta-label">Card Holder</div>
-                            <div className="card-meta-value">{holderName}</div>
+                            <div style={{ fontSize: '0.65rem', color: 'var(--gold)', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700 }}>
+                                EMERITUS PRIME
+                            </div>
+                            <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--parchment)' }}>
+                                {accountName}
+                            </div>
                         </div>
-                        <div style={{ textAlign: "right" }}>
-                            <div className="card-meta-label">Expires</div>
-                            <div className="card-meta-value" style={{ fontFamily: "monospace" }}>{expiry}</div>
+                        <span
+                            style={{
+                                fontSize: '0.65rem',
+                                fontFamily: 'var(--mono)',
+                                padding: '0.2rem 0.5rem',
+                                borderRadius: '4px',
+                                border: `1px solid ${isFrozen ? 'var(--rust)' : 'var(--moss)'}`,
+                                color: isFrozen ? 'var(--rust)' : 'var(--moss)',
+                            }}
+                        >
+              {isFrozen ? 'FROZEN' : 'ACTIVE'}
+            </span>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', margin: '0.6rem 0' }}>
+                        <div className="card-chip" />
+                        <span style={{ fontSize: '1rem', color: 'var(--parchment-dim)' }}>📡</span>
+                    </div>
+
+                    <div>
+                        <div style={{ fontFamily: 'var(--mono)', fontSize: '1.05rem', letterSpacing: '0.15em', color: 'var(--parchment)' }}>
+                            {displayPan}
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: '0.6rem' }}>
+                            <div>
+                                <div style={{ fontSize: '0.55rem', color: 'var(--parchment-dim)', textTransform: 'uppercase' }}>Cardholder</div>
+                                <div style={{ fontSize: '0.75rem', fontFamily: 'var(--mono)', color: 'var(--parchment)', fontWeight: 600 }}>
+                                    {holderName}
+                                </div>
+                            </div>
+                            <div>
+                                <div style={{ fontSize: '0.55rem', color: 'var(--parchment-dim)', textTransform: 'uppercase' }}>Expires</div>
+                                <div style={{ fontSize: '0.75rem', fontFamily: 'var(--mono)', color: 'var(--parchment)' }}>
+                                    {expiry}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* BACK OF CARD */}
-                <div className="card-face-surface card-back-surface">
-                    <div className="card-magnetic-black-bar" />
-
-                    <div className="card-signature-box">
-                        <div className="card-meta-label" style={{ marginBottom: "4px", textAlign: "right" }}>
-                            Authorized Signature
+                {/* BACK FACE */}
+                <div className="card-face card-face-back">
+                    <div className="mag-stripe" />
+                    <div>
+                        <div style={{ fontSize: '0.6rem', color: 'var(--parchment-dim)', padding: '0 1.4rem' }}>
+                            Authorized Sovereign Signature
                         </div>
-                        <div className="card-signature-strip">
-                            <span className="card-signature-watermark">Emeritus Prime Bank</span>
-                            <div className="card-cvv-display">{showFullNumber ? cvv : "•••"}</div>
+                        <div className="cvv-strip">
+                            CVV {cvv}
                         </div>
                     </div>
-
-                    <div className="card-disclaimer-text">
-                        Issued by Emeritus Prime Bank Ltd. Authorised financial services and registered credit provider.
+                    <div style={{ fontSize: '0.6rem', color: 'var(--parchment-dim)', padding: '0 1.4rem', textAlign: 'center' }}>
+                        Issued by Emeritus Prime Bank Limited. Sovereign Vault Custody.
                     </div>
                 </div>
             </div>

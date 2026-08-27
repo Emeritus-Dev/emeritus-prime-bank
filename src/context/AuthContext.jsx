@@ -1,85 +1,120 @@
-import React, { createContext, useContext, useState } from "react";
-import { DEMO_CUSTOMER, ACCOUNTS } from "../data/mockData.js";
+import React, { createContext, useContext, useState } from 'react';
 
 const AuthContext = createContext(null);
 
-// Fallback decoy accounts presented when Duress Mode is active
-const DECOY_ACCOUNTS = [
-    {
-        id: "acc-decoy-1",
-        name: "Standard Cheque Account",
-        accountNumber: "4209 •••• 1092",
-        type: "Cheque",
-        balance: 1450.00,
-        frozen: false
-    },
-    {
-        id: "acc-decoy-2",
-        name: "Emergency Savings",
-        accountNumber: "8821 •••• 5501",
-        type: "Savings",
-        balance: 320.00,
-        frozen: false
-    }
-];
+export const AuthProvider = ({ children }) => {
+    const [isAuthenticated, setIsAuthenticated] = useState(true);
+    const [isDuress, setIsDuress] = useState(false);
+    const [customerName, setCustomerName] = useState('Tshegofatso Hlabela');
+    const [initials, setInitials] = useState('TH');
 
-export function AuthProvider({ children }) {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [isDuressMode, setIsDuressMode] = useState(false);
-    const [activeAccounts, setActiveAccounts] = useState(ACCOUNTS);
+    const [accounts, setAccounts] = useState([
+        {
+            id: 'acc-1',
+            name: 'SOVEREIGN TREASURY',
+            accountNumber: '••• 8842',
+            balance: 482950.0,
+            limit: 150000,
+            type: 'Primary Cheque',
+            isFrozen: false,
+        },
+        {
+            id: 'acc-2',
+            name: 'TACTICAL RESERVE LIQUIDITY',
+            accountNumber: '••• 3109',
+            balance: 125400.0,
+            limit: 50000,
+            type: '7-Day Notice Vault',
+            isFrozen: false,
+        },
+        {
+            id: 'acc-3',
+            name: 'SOVEREIGN BLACK CARD',
+            accountNumber: '••• 9921',
+            balance: -18500.0,
+            limit: 75000,
+            type: 'Credit Facility',
+            isCredit: true,
+            isFrozen: false,
+        },
+    ]);
 
-    const STANDARD_PIN = DEMO_CUSTOMER.passcode || "1234";
-    const DURESS_PIN = "9999"; // Secondary coercion trigger PIN
+    const [transactions, setTransactions] = useState([
+        {
+            id: 'tx-1',
+            title: 'Bullion Vault Allocation',
+            date: 'Today, 08:30',
+            category: 'Asset Transfer',
+            amount: -45000.0,
+            isPositive: false,
+            tag: 'Business',
+        },
+        {
+            id: 'tx-2',
+            title: 'Offshore Dividend Inflow',
+            date: 'Yesterday, 14:15',
+            category: 'Yield Distribution',
+            amount: 128500.0,
+            isPositive: true,
+            tag: 'Tax Deductible',
+        },
+        {
+            id: 'tx-3',
+            title: 'Private Aviation Charter',
+            date: '24 Aug, 11:20',
+            category: 'Executive Logistics',
+            amount: -32000.0,
+            isPositive: false,
+            tag: 'Personal',
+        },
+    ]);
 
-    const signIn = (enteredPin = STANDARD_PIN) => {
-        if (enteredPin === DURESS_PIN) {
-            // 1. Activate Duress Mode silently
-            setIsDuressMode(true);
-            setActiveAccounts(DECOY_ACCOUNTS);
-
-            // 2. Dispatch silent security log (simulates emergency fraud desk dispatch)
-            console.warn(
-                "%c[SECURITY ALERT] DURESS MODE ACTIVATED. Silent emergency panic signal dispatched to Emeritus Fraud Desk.",
-                "background: #8b0000; color: #ffffff; font-weight: bold; padding: 4px 8px; border-radius: 4px;"
-            );
-
-            setIsAuthenticated(true);
-            return { success: true, duress: true };
-        }
-
-        if (enteredPin === STANDARD_PIN) {
-            setIsDuressMode(false);
-            setActiveAccounts(ACCOUNTS);
-            setIsAuthenticated(true);
-            return { success: true, duress: false };
-        }
-
-        return { success: false, error: "Passcode incorrect. Try 1234 or 9999 for demo." };
+    const toggleCardFreeze = (id) => {
+        setAccounts((prev) =>
+            prev.map((acc) => (acc.id === id ? { ...acc, isFrozen: !acc.isFrozen } : acc))
+        );
     };
 
-    const signOut = () => {
+    const updateAccountLimit = (id, newLimit) => {
+        setAccounts((prev) =>
+            prev.map((acc) => (acc.id === id ? { ...acc, limit: newLimit } : acc))
+        );
+    };
+
+    const login = (pin) => {
+        if (pin === '9999') {
+            setIsDuress(true);
+            setIsAuthenticated(true);
+        } else if (pin === '1234') {
+            setIsDuress(false);
+            setIsAuthenticated(true);
+        } else {
+            alert('Invalid Security PIN');
+        }
+    };
+
+    const logout = () => {
         setIsAuthenticated(false);
-        setIsDuressMode(false);
-        setActiveAccounts(ACCOUNTS);
     };
 
-    const value = {
-        isAuthenticated,
-        isDuressMode,
-        customerName: isDuressMode ? "T. Hlabela (Restricted)" : DEMO_CUSTOMER.firstName,
-        initials: DEMO_CUSTOMER.initials,
-        accounts: activeAccounts,
-        signIn,
-        signOut,
-    };
+    return (
+        <AuthContext.Provider
+            value={{
+                isAuthenticated,
+                isDuress,
+                customerName,
+                initials,
+                accounts,
+                transactions,
+                toggleCardFreeze,
+                updateAccountLimit,
+                login,
+                logout,
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    );
+};
 
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth() {
-    const context = useContext(AuthContext);
-    if (!context) {
-        throw new Error("useAuth must be used within an AuthProvider");
-    }
-    return context;
-}
+export const useAuth = () => useContext(AuthContext);

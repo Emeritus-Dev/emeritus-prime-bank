@@ -20,26 +20,796 @@
     --mono: 'IBM Plex Mono', monospace;
 }
 
-* {
+*, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-body {
+html, body, #root, .app-root {
     background-color: var(--ink);
     color: var(--parchment);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     min-height: 100vh;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+img, svg, video {
+    max-width: 100%;
+    height: auto;
 }
 
 /* ==========================================================================
-   DASHBOARD CORE LAYOUT
+   SOVEREIGN EXECUTIVE TERMINAL SHELL (FLUID & ZERO HORIZONTAL SCROLL)
+   ========================================================================== */
+.executive-terminal-root {
+    min-height: 100vh;
+    width: 100%;
+    max-width: 100%;
+    background: radial-gradient(circle at 50% 10%, #151d2a 0%, #0b0f14 85%);
+    color: var(--parchment);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow-x: hidden;
+    padding-bottom: 105px;
+}
+
+.terminal-header {
+    width: 100%;
+    max-width: 520px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.1rem;
+    background: rgba(11, 15, 20, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid var(--hairline);
+}
+
+.terminal-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+}
+
+.crest-wrapper {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.brand-title {
+    font-family: var(--font-serif);
+    font-size: clamp(0.9rem, 3vw, 1.05rem);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--parchment);
+    line-height: 1.1;
+}
+
+.brand-subtitle {
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    font-weight: 600;
+    margin-top: 0.15rem;
+}
+
+.terminal-header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    flex-shrink: 0;
+}
+
+.icon-circle-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--surface-raised);
+    border: 1px solid var(--hairline);
+    color: var(--parchment);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.icon-circle-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+.notification-dot {
+    position: absolute;
+    top: 8px;
+    right: 9px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 8px var(--gold);
+}
+
+.terminal-scroll-area {
+    padding: 1.1rem 1rem 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    max-width: 520px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* ==========================================================================
+   CONSOLIDATED WEALTH HERO CARD
+   ========================================================================== */
+.hero-wealth-card {
+    position: relative;
+    background: linear-gradient(135deg, rgba(24, 32, 48, 0.95) 0%, rgba(14, 20, 28, 0.98) 100%);
+    border: 1px solid var(--hairline-gold);
+    border-radius: 22px;
+    padding: 1.25rem;
+    overflow: hidden;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.hero-wealth-content {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    min-width: 0;
+}
+
+.hero-wealth-top {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.35rem;
+}
+
+.hero-tag {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--parchment-dim);
+    text-transform: uppercase;
+}
+
+.live-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.58rem;
+    font-family: var(--mono);
+    font-weight: 700;
+    color: var(--gold);
+    background: rgba(201, 162, 39, 0.12);
+    border: 1px solid var(--hairline-gold);
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+}
+
+.live-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--moss);
+    box-shadow: 0 0 6px var(--moss);
+}
+
+.balance-value-row {
+    cursor: pointer;
+    user-select: none;
+}
+
+.hero-balance-text {
+    font-family: var(--mono);
+    font-size: clamp(1.15rem, 5vw, 1.55rem);
+    font-weight: 700;
+    color: var(--parchment);
+    letter-spacing: -0.02em;
+    margin: 0.2rem 0;
+    line-height: 1.15;
+    word-break: break-word;
+}
+
+.hero-currency-symbol {
+    color: var(--gold);
+}
+
+.currency-selector-pill {
+    background: transparent;
+    border: none;
+    color: var(--parchment-dim);
+    font-size: 0.68rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 0.9rem;
+}
+
+.currency-selector-pill:hover {
+    color: var(--gold);
+}
+
+.gold-holdings-block {
+    margin-bottom: 1rem;
+}
+
+.gold-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    margin-bottom: 0.2rem;
+}
+
+.gold-val {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--parchment);
+    font-family: var(--mono);
+}
+
+.gold-subval {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--parchment-dim);
+    font-weight: 500;
+}
+
+.hero-cta-btn {
+    background: transparent;
+    border: 1px solid var(--hairline-gold);
+    color: var(--parchment);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 0.45rem 0.85rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.hero-cta-btn:hover {
+    background: var(--gold);
+    color: var(--ink);
+}
+
+.hero-bullion-art {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* ==========================================================================
+   6-SECOND EXECUTIVE INTELLIGENCE RADAR
+   ========================================================================== */
+.intel-radar-card {
+    border: 1px solid var(--hairline-gold);
+    border-radius: 18px;
+    padding: 1.1rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    width: 100%;
+}
+
+.radar-progress-track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.radar-progress-fill {
+    height: 100%;
+    background: var(--gold);
+    box-shadow: 0 0 8px var(--gold);
+    animation: radarSlideTimer 6s linear infinite;
+}
+
+.radar-progress-fill.is-paused {
+    animation-play-state: paused;
+}
+
+@keyframes radarSlideTimer {
+    from { width: 0%; }
+    to { width: 100%; }
+}
+
+.radar-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4rem;
+    gap: 0.5rem;
+}
+
+.radar-badge {
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-transform: uppercase;
+}
+
+.radar-counter {
+    font-size: 0.65rem;
+    font-family: var(--mono);
+    color: var(--parchment-dim);
+}
+
+.radar-title {
+    font-family: var(--font-serif);
+    font-size: clamp(0.92rem, 3.5vw, 1.05rem);
+    font-weight: 600;
+    color: var(--parchment);
+    line-height: 1.25;
+    margin-bottom: 0.35rem;
+}
+
+.radar-desc {
+    font-size: 0.74rem;
+    color: var(--parchment-dim);
+    line-height: 1.4;
+    margin-bottom: 0.75rem;
+}
+
+.radar-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    border-top: 1px solid var(--hairline);
+    padding-top: 0.6rem;
+}
+
+.radar-metric {
+    font-size: 0.66rem;
+    font-family: var(--mono);
+    color: var(--parchment);
+}
+
+.radar-cta-btn {
+    background: transparent;
+    border: none;
+    color: var(--gold);
+    font-size: 0.72rem;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0;
+}
+
+/* ==========================================================================
+   3D TITANIUM CARD CAROUSEL & FLIP PHYSICS
+   ========================================================================== */
+.card-section {
+    perspective: 1000px;
+    width: 100%;
+}
+
+.card-3d-flipper {
+    position: relative;
+    width: 100%;
+    height: 215px;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+}
+
+.card-3d-flipper.is-flipped {
+    transform: rotateY(180deg);
+}
+
+.titanium-card-front,
+.titanium-card-back {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 20px;
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(201, 162, 39, 0.4);
+    background: linear-gradient(135deg, #1c2331 0%, #0e131a 100%);
+    overflow: hidden;
+}
+
+.titanium-card-front.is-frozen {
+    filter: grayscale(0.85) contrast(0.9);
+    opacity: 0.7;
+}
+
+.titanium-card-back {
+    transform: rotateY(180deg);
+    background: #0d1218;
+}
+
+.card-front-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.card-brand {
+    font-family: var(--font-serif);
+    font-size: 0.92rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--parchment);
+}
+
+.card-brand-sub {
+    font-size: 0.55rem;
+    letter-spacing: 0.14em;
+    color: var(--gold);
+    font-weight: 600;
+}
+
+.card-chip-cluster {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.card-chip {
+    width: 32px;
+    height: 24px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.contactless-icon {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--parchment-dim);
+}
+
+.card-center-crest {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.25;
+    pointer-events: none;
+}
+
+.card-pan-number {
+    font-family: var(--mono);
+    font-size: clamp(0.95rem, 4.2vw, 1.15rem);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    color: var(--parchment);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.card-front-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+
+.card-holder-name {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--parchment);
+}
+
+.card-tier-label {
+    font-size: 0.52rem;
+    color: var(--gold);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+}
+
+.card-expiry-box {
+    text-align: center;
+}
+
+.expiry-label {
+    display: block;
+    font-size: 0.48rem;
+    color: var(--parchment-dim);
+}
+
+.expiry-val {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 600;
+}
+
+.visa-infinite-mark {
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    font-style: italic;
+    color: var(--parchment);
+}
+
+.card-mag-stripe {
+    height: 36px;
+    background: #000000;
+    margin: -1.2rem -1.2rem 0.8rem -1.2rem;
+}
+
+.card-cvv-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.6rem;
+}
+
+.cvv-label {
+    font-size: 0.65rem;
+    color: var(--parchment-dim);
+}
+
+.cvv-box {
+    background: var(--surface-raised);
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--gold);
+    font-weight: 700;
+}
+
+.card-back-note {
+    font-size: 0.52rem;
+    color: var(--parchment-dim);
+    text-align: center;
+    line-height: 1.3;
+}
+
+.card-actions-back {
+    display: flex;
+    justify-content: center;
+}
+
+.card-flip-hint {
+    font-size: 0.65rem;
+    color: var(--parchment-dim);
+    text-align: center;
+    margin-top: 0.55rem;
+}
+
+/* ==========================================================================
+   LIVE MARKETS TICKER CARD
+   ========================================================================== */
+.markets-terminal-card {
+    background: rgba(18, 24, 33, 0.85);
+    border: 1px solid var(--hairline);
+    border-radius: 20px;
+    padding: 1.1rem;
+    width: 100%;
+}
+
+.markets-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.85rem;
+}
+
+.markets-title {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+}
+
+.market-open-badge {
+    font-size: 0.6rem;
+    color: var(--moss);
+    font-family: var(--mono);
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.market-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 0;
+    border-bottom: 1px solid var(--hairline);
+}
+
+.market-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.market-pair {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-width: 0;
+}
+
+.asset-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.asset-icon.gold {
+    background: rgba(201, 162, 39, 0.15);
+    color: var(--gold);
+    border: 1px solid var(--hairline-gold);
+}
+
+.asset-icon.flag {
+    background: var(--surface-raised);
+    font-size: 1.05rem;
+}
+
+.asset-title {
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--parchment);
+}
+
+.asset-sub {
+    font-size: 0.6rem;
+    color: var(--parchment-dim);
+}
+
+.sparkline {
+    width: 58px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.asset-rate {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.rate-val {
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--parchment);
+}
+
+.rate-change {
+    font-size: 0.6rem;
+    font-family: var(--mono);
+    font-weight: 600;
+}
+
+.rate-change.positive {
+    color: var(--moss);
+}
+
+.rate-change.negative {
+    color: var(--rust);
+}
+
+/* ==========================================================================
+   FROSTED OBSIDIAN 5-TAB FLOATING BOTTOM NAVIGATION DOCK
+   ========================================================================== */
+.sovereign-floating-dock {
+    position: fixed;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 24px);
+    max-width: 440px;
+    background: rgba(14, 19, 26, 0.94);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--hairline-gold);
+    border-radius: 9999px;
+    padding: 0.5rem 0.4rem;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8);
+    z-index: 99;
+}
+
+.dock-item {
+    background: transparent;
+    border: none;
+    color: var(--parchment-dim);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    cursor: pointer;
+    padding: 0.3rem 0.4rem;
+    position: relative;
+    transition: all 0.2s ease;
+    flex: 1;
+    min-width: 0;
+}
+
+.dock-item:hover,
+.dock-item.is-active {
+    color: var(--gold);
+}
+
+.dock-label {
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+}
+
+.dock-active-dot {
+    position: absolute;
+    bottom: -2px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--gold);
+    box-shadow: 0 0 6px var(--gold);
+}
+
+/* ==========================================================================
+   DASHBOARD CORE LAYOUT & SUB-PANELS
    ========================================================================== */
 .dashboard-wrapper {
     min-height: 100vh;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
     background-color: var(--ink);
     display: flex;
     flex-direction: column;
@@ -47,9 +817,11 @@ body {
 
 .sovereign-header {
     display: flex;
-    justifyContent: space-between;
+    justify-content: space-between;
     align-items: center;
-    padding: 1.25rem 2rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 1.1rem 1.5rem;
     background-color: var(--surface);
     border-bottom: 1px solid var(--hairline);
 }
@@ -57,13 +829,14 @@ body {
 .header-left {
     display: flex;
     align-items: center;
-    gap: 1.2rem;
+    gap: 1rem;
+    min-width: 0;
 }
 
 .access-badge {
-    font-size: 0.68rem;
+    font-size: 0.65rem;
     font-weight: 700;
-    letter-spacing: 0.15em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
 }
 
@@ -77,7 +850,7 @@ body {
 
 .customer-heading {
     font-family: var(--font-serif);
-    font-size: 1.45rem;
+    font-size: clamp(1.1rem, 4vw, 1.45rem);
     font-weight: 600;
     color: var(--parchment);
     margin-top: 0.15rem;
@@ -86,7 +859,7 @@ body {
 .header-right {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
 }
 
 .duress-banner {
@@ -94,18 +867,20 @@ body {
     color: var(--parchment);
     text-align: center;
     padding: 0.55rem;
-    font-size: 0.72rem;
-    letter-spacing: 0.12em;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
     font-weight: 700;
+    width: 100%;
 }
 
 .sovereign-nav {
     display: flex;
     overflow-x: auto;
     gap: 0.5rem;
-    padding: 0.85rem 2rem;
+    padding: 0.75rem 1.25rem;
     background-color: var(--surface-raised);
     border-bottom: 1px solid var(--hairline);
+    width: 100%;
 }
 
 .sovereign-nav::-webkit-scrollbar {
@@ -121,7 +896,7 @@ body {
     max-width: 1200px;
     width: 100%;
     margin: 0 auto;
-    padding: 2.2rem 1.5rem 4rem 1.5rem;
+    padding: 1.5rem 1rem 4rem 1rem;
     flex: 1;
 }
 
@@ -131,25 +906,28 @@ body {
 .panel {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1.2rem;
+    width: 100%;
 }
 
 .section-head {
     display: flex;
-    justifyContent: space-between;
+    justify-content: space-between;
     align-items: flex-end;
-    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 0.4rem;
 }
 
 .section-title {
     font-family: var(--font-serif);
-    font-size: 1.4rem;
+    font-size: clamp(1.15rem, 4vw, 1.4rem);
     font-weight: 600;
     color: var(--parchment);
 }
 
 .section-sub {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     color: var(--parchment-dim);
     margin-top: 0.25rem;
     max-width: 700px;
@@ -163,11 +941,11 @@ body {
     background: var(--surface);
     color: var(--parchment-dim);
     border: 1px solid var(--hairline);
-    padding: 0.45rem 0.9rem;
+    padding: 0.4rem 0.85rem;
     border-radius: 9999px;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 600;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
     cursor: pointer;
     transition: all 0.2s ease;
     white-space: nowrap;
@@ -190,11 +968,11 @@ body {
     background: var(--gold);
     color: var(--ink);
     border: 1px solid var(--gold);
-    padding: 0.6rem 1.2rem;
+    padding: 0.6rem 1.1rem;
     border-radius: 8px;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -213,9 +991,9 @@ body {
     background: transparent;
     color: var(--parchment);
     border: 1px solid var(--hairline);
-    padding: 0.6rem 1.2rem;
+    padding: 0.6rem 1.1rem;
     border-radius: 8px;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -233,7 +1011,7 @@ body {
     width: 100%;
     max-width: 380px;
     margin: 0 auto;
-    padding: 1.05rem 2rem;
+    padding: 1rem 1.5rem;
     border-radius: 9999px;
     border: 1px solid rgba(255, 235, 170, 0.7);
     background: linear-gradient(
@@ -246,15 +1024,15 @@ body {
     );
     color: #0b0f14;
     font-family: var(--font-sans);
-    font-size: 0.9rem;
+    font-size: clamp(0.78rem, 3.2vw, 0.9rem);
     font-weight: 800;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
+    gap: 0.65rem;
     overflow: hidden;
     box-shadow:
             0 4px 18px rgba(179, 135, 40, 0.45),
@@ -265,7 +1043,7 @@ body {
 }
 
 .btn-sovereign-vault:hover {
-    transform: translateY(-2px) scale(1.02);
+    transform: translateY(-2px) scale(1.01);
     box-shadow:
             0 6px 26px rgba(252, 246, 186, 0.6),
             0 16px 42px rgba(0, 0, 0, 0.85),
@@ -276,9 +1054,6 @@ body {
 
 .btn-sovereign-vault:active {
     transform: translateY(1px) scale(0.985);
-    box-shadow:
-            0 2px 10px rgba(179, 135, 40, 0.4),
-            inset 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .btn-sovereign-vault::before,
@@ -304,7 +1079,7 @@ body {
     width: 100%;
     max-width: 280px;
     margin: 0 auto;
-    padding: 0.85rem 1.4rem;
+    padding: 0.85rem 1.2rem;
     border-radius: 9999px;
     border: 1px solid rgba(255, 235, 170, 0.7);
     background: linear-gradient(
@@ -317,15 +1092,15 @@ body {
     );
     color: #0b0f14;
     font-family: var(--font-sans);
-    font-size: 0.82rem;
+    font-size: 0.78rem;
     font-weight: 800;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.6rem;
+    gap: 0.5rem;
     overflow: hidden;
     box-shadow:
             0 4px 16px rgba(179, 135, 40, 0.4),
@@ -335,29 +1110,10 @@ body {
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.btn-sovereign-vault-sm:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow:
-            0 6px 22px rgba(252, 246, 186, 0.6),
-            0 14px 34px rgba(0, 0, 0, 0.85);
-    border-color: #ffffff;
-}
-
-.btn-sovereign-vault-sm:active {
-    transform: translateY(1px) scale(0.985);
-    box-shadow: 0 2px 8px rgba(179, 135, 40, 0.4);
-}
-
 @keyframes goldSweep {
-    0% {
-        left: -120%;
-    }
-    30% {
-        left: 140%;
-    }
-    100% {
-        left: 140%;
-    }
+    0% { left: -120%; }
+    30% { left: 140%; }
+    100% { left: 140%; }
 }
 
 /* ==========================================================================
@@ -366,22 +1122,23 @@ body {
 .pin-keypad-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1.1rem;
-    max-width: 280px;
+    gap: 0.95rem;
+    max-width: 260px;
+    width: 100%;
     margin: 0 auto;
     justify-items: center;
     align-items: center;
 }
 
 .pin-key-round {
-    width: 68px;
-    height: 68px;
+    width: 64px;
+    height: 64px;
     border-radius: 50%;
     background: var(--surface-raised);
     border: 1px solid var(--hairline);
     color: var(--parchment);
     font-family: var(--mono);
-    font-size: 1.35rem;
+    font-size: 1.3rem;
     font-weight: 600;
     cursor: pointer;
     display: flex;
@@ -403,8 +1160,8 @@ body {
 }
 
 .pin-key-faceid {
-    width: 68px;
-    height: 68px;
+    width: 64px;
+    height: 64px;
     border-radius: 50%;
     border: 1px solid var(--hairline-gold);
     background: var(--surface-raised);
@@ -437,9 +1194,10 @@ body {
    ========================================================================== */
 .accounts-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 1.25rem;
-    margin-top: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: 1.1rem;
+    margin-top: 0.75rem;
+    width: 100%;
 }
 
 .account-slider-container {
@@ -450,6 +1208,7 @@ body {
     border: 1px solid var(--hairline);
     background: var(--surface);
     transition: border-color 0.2s ease;
+    width: 100%;
 }
 
 .account-slider-container:hover {
@@ -464,10 +1223,10 @@ body {
     position: absolute;
     inset: 0;
     background: var(--surface-raised);
-    padding: 1.4rem;
+    padding: 1.25rem;
     display: flex;
     flex-direction: column;
-    justifyContent: space-between;
+    justify-content: space-between;
 }
 
 .revealed-label {
@@ -479,7 +1238,7 @@ body {
 
 .revealed-amount {
     font-family: var(--mono);
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     font-weight: 700;
     color: var(--parchment);
     margin-top: 0.2rem;
@@ -487,17 +1246,18 @@ body {
 
 .quick-actions-row {
     display: flex;
-    gap: 0.5rem;
+    flex-wrap: wrap;
+    gap: 0.45rem;
 }
 
 .account-front {
     position: absolute;
     inset: 0;
     background: var(--surface);
-    padding: 1.4rem;
+    padding: 1.25rem;
     display: flex;
     flex-direction: column;
-    justifyContent: space-between;
+    justify-content: space-between;
     cursor: pointer;
     transform: translateX(0);
     transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
@@ -505,18 +1265,19 @@ body {
 }
 
 .account-front.is-slid {
-    transform: translateX(-65%);
+    transform: translateX(-68%);
 }
 
 .front-header {
     display: flex;
-    justifyContent: space-between;
+    justify-content: space-between;
     align-items: flex-start;
+    gap: 0.5rem;
 }
 
 .account-name {
     display: block;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     font-weight: 600;
     color: var(--parchment);
 }
@@ -524,27 +1285,28 @@ body {
 .account-number {
     display: block;
     font-family: var(--mono);
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     color: var(--parchment-dim);
     margin-top: 0.15rem;
 }
 
 .front-footer {
     display: flex;
-    justifyContent: space-between;
+    justify-content: space-between;
     align-items: flex-end;
+    gap: 0.5rem;
 }
 
 .masked-balance {
     font-family: var(--mono);
-    font-size: 1.25rem;
-    letter-spacing: 0.2em;
+    font-size: 1.2rem;
+    letter-spacing: 0.16em;
     color: var(--parchment);
     margin-top: 0.15rem;
 }
 
 .slide-hint {
-    font-size: 0.68rem;
+    font-size: 0.66rem;
     color: var(--gold);
     font-weight: 500;
 }
@@ -554,22 +1316,24 @@ body {
    ========================================================================== */
 .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 1.2rem;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+    gap: 1rem;
+    width: 100%;
 }
 
 .info-card {
     background: var(--surface);
     border: 1px solid var(--hairline);
     border-radius: 12px;
-    padding: 1.25rem;
+    padding: 1.15rem;
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
+    width: 100%;
 }
 
 .info-card-title {
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--parchment-dim);
@@ -577,12 +1341,12 @@ body {
 
 .info-card-value {
     font-family: var(--mono);
-    font-size: 1.35rem;
+    font-size: clamp(1.15rem, 4vw, 1.35rem);
     font-weight: 700;
 }
 
 .info-card-note {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     color: var(--parchment-dim);
 }
 
@@ -591,13 +1355,15 @@ body {
     border: 1px solid var(--hairline);
     border-radius: 14px;
     overflow: hidden;
+    width: 100%;
 }
 
 .transaction-row {
     display: flex;
-    justifyContent: space-between;
+    justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.25rem;
+    gap: 0.75rem;
+    padding: 0.9rem 1rem;
     border-bottom: 1px solid var(--hairline);
     transition: background 0.15s ease;
 }
@@ -613,17 +1379,18 @@ body {
 .tx-meta {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 0.18rem;
+    min-width: 0;
 }
 
 .tx-name {
-    font-size: 0.88rem;
+    font-size: 0.85rem;
     font-weight: 600;
     color: var(--parchment);
 }
 
 .tx-date {
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     color: var(--parchment-dim);
 }
 
@@ -655,12 +1422,14 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .toggle-row {
     display: flex;
-    justifyContent: space-between;
+    justify-content: space-between;
     align-items: center;
+    gap: 0.75rem;
     width: 100%;
 }
 
@@ -673,6 +1442,7 @@ body {
     position: relative;
     cursor: pointer;
     transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
 .toggle.is-on {
@@ -701,38 +1471,41 @@ body {
 .modal-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.75);
-    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.78);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1.5rem;
+    padding: 1rem;
     z-index: 999;
 }
 
 .modal-card {
     background: var(--surface);
     border: 1px solid var(--hairline-gold);
-    border-radius: 14px;
+    border-radius: 16px;
     max-width: 460px;
     width: 100%;
-    padding: 1.8rem;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    padding: 1.5rem;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65);
+    max-height: 92vh;
+    overflow-y: auto;
 }
 
 .modal-header {
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.1rem;
 }
 
 .modal-title {
     font-family: var(--font-serif);
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     font-weight: 600;
     color: var(--gold);
 }
 
 .modal-subtitle {
-    font-size: 0.75rem;
+    font-size: 0.74rem;
     color: var(--parchment-dim);
     margin-top: 0.25rem;
 }
@@ -740,7 +1513,7 @@ body {
 .modal-form {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.9rem;
 }
 
 .form-group {
@@ -765,6 +1538,7 @@ body {
     font-size: 0.85rem;
     outline: none;
     transition: border-color 0.2s ease;
+    width: 100%;
 }
 
 .input-field:focus {
@@ -773,7 +1547,7 @@ body {
 
 .modal-actions {
     display: flex;
-    gap: 0.8rem;
+    gap: 0.75rem;
     margin-top: 1rem;
 }
 
@@ -834,10 +1608,10 @@ select.field-input option {
 }
 
 .empty-state {
-    padding: 2.5rem;
+    padding: 2rem 1rem;
     text-align: center;
     color: var(--parchment-dim);
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     border: 1px dashed var(--hairline);
     border-radius: 12px;
 }
@@ -846,12 +1620,8 @@ select.field-input option {
    ANIMATIONS
    ========================================================================== */
 @keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 .animate-spin {
@@ -859,94 +1629,67 @@ select.field-input option {
 }
 
 @keyframes slideUp {
-    from {
-        transform: translateY(100%);
-    }
-    to {
-        transform: translateY(0);
-    }
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
 }
 
 /* ==========================================================================
-   MOBILE & DEVICE RESPONSIVE CONFORMANCE
-   (iPhone 14 Pro Max, Pixel 7, Mobile Breakpoints)
+   ULTRA-COMPACT & MOBILE BREAKPOINTS (ALL SCREEN RESOLUTIONS)
    ========================================================================== */
 @media (max-width: 768px) {
     .sovereign-header {
-        padding: 0.9rem 1.1rem;
-        flex-wrap: nowrap;
+        padding: 0.85rem 1rem;
     }
 
     .header-left {
-        gap: 0.8rem;
-    }
-
-    .customer-heading {
-        font-size: 1.15rem;
-    }
-
-    .access-badge {
-        font-size: 0.6rem;
+        gap: 0.75rem;
     }
 
     .sovereign-nav {
-        padding: 0.6rem 1rem;
+        padding: 0.6rem 0.9rem;
         gap: 0.4rem;
     }
 
-    .action-pill {
-        padding: 0.4rem 0.75rem;
-        font-size: 0.7rem;
-    }
-
     .dashboard-content {
-        padding: 1.2rem 1rem 3rem 1rem;
+        padding: 1rem 0.85rem 3.5rem 0.85rem;
     }
 
-    .accounts-row {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-
-    .account-slider-container {
-        height: 190px;
-    }
-
-    .account-front.is-slid {
-        transform: translateX(-80%);
-    }
-
+    .accounts-row,
     .card-grid {
         grid-template-columns: 1fr;
-        gap: 0.9rem;
     }
 
     .section-head {
         flex-direction: column;
         align-items: flex-start;
-        gap: 0.8rem;
-    }
-
-    .transaction-row {
-        padding: 0.85rem 0.9rem;
+        gap: 0.65rem;
     }
 
     .modal-card {
-        padding: 1.4rem;
-        max-width: 92vw;
-    }
-
-    .card-3d-wrapper {
-        max-width: 100%;
+        padding: 1.25rem;
+        max-width: 95vw;
     }
 }
 
-@media (max-width: 480px) {
-    .revealed-amount {
-        font-size: 1.2rem;
+@media (max-width: 390px) {
+    .hero-wealth-card {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
-    .masked-balance {
+    .hero-bullion-art {
+        align-self: flex-end;
+        margin-top: -2.5rem;
+    }
+
+    .sparkline {
+        display: none;
+    }
+
+    .pin-key-round,
+    .pin-key-faceid {
+        width: 56px;
+        height: 56px;
         font-size: 1.15rem;
     }
 }

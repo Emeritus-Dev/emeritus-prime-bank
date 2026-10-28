@@ -2,14 +2,6 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import FoxMark from './FoxMark';
 
-// Luxury 3D Icon Assets
-import iconLounge from '../assets/icons/icon-lounge.png';
-import iconEscrow from '../assets/icons/icon-escrow.png';
-import iconAviation from '../assets/icons/icon-aviation.png';
-import iconBullion from '../assets/icons/icon-bullion.png';
-import iconSarb from '../assets/icons/icon-sarb.png';
-import iconTax from '../assets/icons/icon-tax.png';
-
 export default function LoginScreen() {
     const { login } = useAuth();
     const [pin, setPin] = useState('');
@@ -22,7 +14,7 @@ export default function LoginScreen() {
         {
             id: 'lounge',
             label: 'Lounge & Escort',
-            icon: iconLounge,
+            emoji: '🛋️',
             title: 'VIP Terminal & Escort Pass',
             details: 'Instant access pass for OR Tambo (JNB) Fireblade terminal and Cape Town (CPT) Signature VIP suites. Includes biometric diplomatic fast-track lane clearance.',
             badge: 'Active Priority',
@@ -30,7 +22,7 @@ export default function LoginScreen() {
         {
             id: 'escrow',
             label: 'Sovereign Escrow',
-            icon: iconEscrow,
+            emoji: '⚖️',
             title: 'Institutional Escrow Vault',
             details: 'Dual-key cryptographic holding vault for high-value acquisitions, bullion settlements, and real estate disbursements.',
             badge: 'SARB Regulated',
@@ -38,7 +30,7 @@ export default function LoginScreen() {
         {
             id: 'aviation',
             label: 'Private Aviation',
-            icon: iconAviation,
+            emoji: '✈️',
             title: 'Executive Air Concierge',
             details: 'Direct dispatch line to Fireblade Aviation & ExecuJet flight handlers. Helipad tarmac bookings and private charter clearance.',
             badge: '24/7 Dispatch',
@@ -46,7 +38,7 @@ export default function LoginScreen() {
         {
             id: 'bullion',
             label: 'Bullion Custody',
-            icon: iconBullion,
+            emoji: '🪙',
             title: 'Allocated Bullion Reserves',
             details: 'Direct access to physical 99.99% gold bars vaulted at Rand Refinery. Real-time physical allocation and audit custody certs.',
             badge: 'Spot R1,482,900/kg',
@@ -54,7 +46,7 @@ export default function LoginScreen() {
         {
             id: 'sarb',
             label: 'SARB Real-Time',
-            icon: iconSarb,
+            emoji: '🏛️',
             title: 'SAMOS Direct Settlement',
             details: 'Gross real-time settlement channel connected directly to the South African Reserve Bank. Instantaneous high-value wire execution.',
             badge: 'T+0 Nominal',
@@ -62,7 +54,7 @@ export default function LoginScreen() {
         {
             id: 'tax',
             label: 'SARS Tax Vault',
-            icon: iconTax,
+            emoji: '🛡️',
             title: 'SARS Tax Shield & Compliance',
             details: 'Automated ring-fenced reserve for provisional corporate and high-net-worth tax liabilities. Real-time SARS Compliance PIN verification.',
             badge: 'Tier 3 Compliant',
@@ -122,6 +114,7 @@ export default function LoginScreen() {
                 position: 'relative',
                 overflow: 'hidden',
                 padding: '1.2rem 1.2rem 2.2rem 1.2rem',
+                width: '100%',
             }}
         >
             {/* TOP INSTITUTIONAL BAR */}
@@ -157,8 +150,8 @@ export default function LoginScreen() {
                         textTransform: 'uppercase',
                     }}
                 >
-          ZA • CAPE TOWN
-        </span>
+                    ZA • CAPE TOWN
+                </span>
             </div>
 
             {/* CENTRAL SOVEREIGN CLIENT CARD */}
@@ -217,7 +210,7 @@ export default function LoginScreen() {
                     </div>
                 </div>
 
-                {/* 3x2 SQUIRCLE ICON TILES */}
+                {/* 3x2 SERVICE TILES */}
                 <div
                     style={{
                         display: 'grid',
@@ -250,33 +243,14 @@ export default function LoginScreen() {
                                     background: '#0e141c',
                                     border: '1px solid var(--hairline-gold)',
                                     boxShadow: '0 8px 20px rgba(0, 0, 0, 0.55)',
-                                    overflow: 'hidden',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
+                                    fontSize: '1.75rem',
                                     transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease',
                                 }}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(-3px) scale(1.04)';
-                                    e.currentTarget.style.borderColor = 'var(--gold)';
-                                    e.currentTarget.style.boxShadow = '0 12px 24px var(--gold-glow)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
-                                    e.currentTarget.style.borderColor = 'var(--hairline-gold)';
-                                    e.currentTarget.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.55)';
-                                }}
                             >
-                                <img
-                                    src={srv.icon}
-                                    alt={srv.label}
-                                    style={{
-                                        width: '100%',
-                                        height: '100%',
-                                        objectFit: 'cover',
-                                        display: 'block',
-                                    }}
-                                />
+                                {srv.emoji}
                             </div>
 
                             <span
@@ -288,8 +262,8 @@ export default function LoginScreen() {
                                     letterSpacing: '0.01em',
                                 }}
                             >
-                {srv.label}
-              </span>
+                                {srv.label}
+                            </span>
                         </button>
                     ))}
                 </div>
@@ -319,12 +293,12 @@ export default function LoginScreen() {
                 </button>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1.2rem', padding: '0 0.5rem' }}>
-          <span style={{ fontSize: '0.68rem', color: 'var(--parchment-dim)' }}>
-            emeritusprime.co.za
-          </span>
                     <span style={{ fontSize: '0.68rem', color: 'var(--parchment-dim)' }}>
-            FICA & SARB Sovereign Protocols
-          </span>
+                        emeritusprime.co.za
+                    </span>
+                    <span style={{ fontSize: '0.68rem', color: 'var(--parchment-dim)' }}>
+                        FICA & SARB Sovereign Protocols
+                    </span>
                 </div>
             </div>
 
@@ -343,23 +317,23 @@ export default function LoginScreen() {
                                     height: '56px',
                                     borderRadius: '12px',
                                     border: '1px solid var(--gold)',
-                                    overflow: 'hidden',
+                                    background: '#0e141c',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '1.8rem',
                                     flexShrink: 0,
                                 }}
                             >
-                                <img
-                                    src={activeServiceModal.icon}
-                                    alt={activeServiceModal.label}
-                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                />
+                                {activeServiceModal.emoji}
                             </div>
                             <div>
-                <span
-                    className="action-pill"
-                    style={{ fontSize: '0.65rem', color: 'var(--moss)', borderColor: 'var(--moss)', padding: '0.15rem 0.5rem' }}
-                >
-                  {activeServiceModal.badge}
-                </span>
+                                <span
+                                    className="action-pill"
+                                    style={{ fontSize: '0.65rem', color: 'var(--moss)', borderColor: 'var(--moss)', padding: '0.15rem 0.5rem' }}
+                                >
+                                    {activeServiceModal.badge}
+                                </span>
                                 <h3 style={{ fontSize: '1.15rem', color: 'var(--parchment)', marginTop: '0.2rem' }}>
                                     {activeServiceModal.title}
                                 </h3>
@@ -414,9 +388,9 @@ export default function LoginScreen() {
                     >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem' }}>
                             <div>
-                <span style={{ fontSize: '0.65rem', color: 'var(--gold)', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700 }}>
-                  Hardware Security Enclave
-                </span>
+                                <span style={{ fontSize: '0.65rem', color: 'var(--gold)', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 700 }}>
+                                    Hardware Security Enclave
+                                </span>
                                 <h3 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-serif)', color: 'var(--parchment)', margin: '0.1rem 0 0 0' }}>
                                     Sovereign PIN / FaceID
                                 </h3>
@@ -488,10 +462,8 @@ export default function LoginScreen() {
                                 </button>
                             ))}
 
-                            {/* EMPTY PLACEHOLDER TO KEEP '0' CENTERED */}
-                            <div style={{ width: '68px', height: '68px' }} />
+                            <div style={{ width: '64px', height: '64px' }} />
 
-                            {/* ZERO */}
                             <button
                                 type="button"
                                 className="pin-key-round"
@@ -501,7 +473,6 @@ export default function LoginScreen() {
                                 0
                             </button>
 
-                            {/* BACKSPACE */}
                             <button
                                 type="button"
                                 className="pin-key-round"
